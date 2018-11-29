@@ -25,33 +25,25 @@ class Store {
     this.Shop = mongoose.model(shopSchema);
   }
 
-  saveUser(email,password){
-
+  get userModel() {
+    return this.User;
   }
 
-  userExists(email,password = null){
-
+  get shopModel() {
+    return this.Shop;
   }
 
-  nearShops({lat, long}){
-    
-  }
+  saveUser(email, password) {}
 
-  addShopToPreferred(user, shop){
+  userExists(email, password = null) {}
 
-  }
+  nearShops({ lat, long }) {}
 
-  removeShopFromPreferred(user,shop){
+  addShopToPreferred(user, shop) {}
 
-  }
+  removeShopFromPreferred(user, shop) {}
 
-  addToDisliked(user,shop){
+  addToDisliked(user, shop) {}
 
-  }
-
-  getPreffered(user){
-
-  }
-
-
+  getPreffered(user) {}
 }
