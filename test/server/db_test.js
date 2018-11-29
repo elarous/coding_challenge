@@ -37,5 +37,19 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(user).to.be.null;
     });
+
+    it('Should return a the correct user using email', async () => {
+      // Given
+      const email = 'existing@existing.com';
+      const password = 'random_password';
+      await store.saveUser(email, password);
+
+      // When
+      const user = await store.loadUser(email);
+
+      // Then
+      expect(user.email).to.equal(email);
+      expect(user.password).to.equal(password);
+    });
   });
 });
