@@ -11,8 +11,8 @@ class Store {
     const userSchema = new mongoose.Schema({
       email: String,
       password: String,
-      preferredStores: [String],
-      dislikedStores: [{ store: String, timestamp: Date }]
+      preferredShops: [String],
+      dislikedShop: [{ shop: String, timestamp: Date }]
     });
 
     const shopSchema = new mongoose.Schema({
