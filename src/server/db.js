@@ -38,6 +38,9 @@ class Store {
   }
 
   loadUser(email, password = null) {
+    if (password) {
+      return this.User.findOne({ email, password });
+    }
     return this.User.findOne({ email });
   }
 

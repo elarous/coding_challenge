@@ -51,5 +51,19 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(user.email).to.equal(email);
       expect(user.password).to.equal(password);
     });
+
+    it('Should return null when for a matching email and non-matching password', async () => {
+      // Given
+      const email = 'another@another.com';
+      const password = 'random_password';
+      const differentPassword = 'different_password';
+      await store.saveUser(email, password);
+
+      // When
+      const user = await store.loadUser(email, differentPassword);
+
+      // Then
+      expect(user).to.be.null;
+    });
   });
 });
