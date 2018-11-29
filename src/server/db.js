@@ -48,7 +48,17 @@ class Store {
     return this.Shop({ name, image, coords }).save();
   }
 
-  addToPreferred(userId, shopId) {}
+  getShopById(id) {
+    return this.Shop.findById(id);
+  }
+
+  addToPreferred(userId, shopId) {
+    return this.User.findByIdAndUpdate(
+      userId,
+      { $push: { preferredShops: shopId } },
+      { new: true, upsert: true }
+    ).exec();
+  }
 
   nearShops({ lat, long }) {}
 

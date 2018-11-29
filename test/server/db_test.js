@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 import '@babel/polyfill';
@@ -97,6 +98,39 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(shop.name).to.equal(name);
       expect(shop.image).to.equal(image);
       expect(shop.coords).to.include(coords);
+    });
+  });
+
+  describe('Retrieving a Shop', () => {
+    it("Should return a shop using it's id", async () => {
+      // Given
+      const name = 'Shop 1';
+      const image = 'img1.jpg';
+      const coords = { lat: 1.5, long: 2.3 };
+      const shop = await store.saveShop(name, image, coords);
+
+      // When
+      const retrievedShop = await store.getShopById(shop._id);
+
+      // Then
+      expect(retrievedShop.name).to.equal(name);
+      expect(retrievedShop.image).to.equal(image);
+      expect(retrievedShop.coords).to.include(coords);
+      expect(retrievedShop._id).to.deep.equal(shop._id);
+    });
+  });
+
+  describe('Preferred Shops', () => {
+    it("Should add a shop to a user's preferred shops", async () => {
+      // Given
+      const user = await store.saveUser('test@test.com', 'random_pass');
+      const shop = await store.saveShop('Shop 1', 'img1.jpg', { lat: 1.1, long: 2.2 });
+
+      // When
+      const updatedUser = await store.addToPreferred(user._id, shop._id);
+
+      // Then
+      expect(updatedUser.preferredShops).is.an('array').that.includes(shop._id);
     });
   });
 });
