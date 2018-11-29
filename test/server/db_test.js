@@ -84,7 +84,7 @@ describe('Testing the persistence layer (db Store)', () => {
   });
 
   describe('Saving a Shop', () => {
-    it('Should insert a user with the right infos', async () => {
+    it('Should insert a shop with the right infos', async () => {
       // Given
       const name = 'Shop 1';
       const image = 'img1.jpg';
