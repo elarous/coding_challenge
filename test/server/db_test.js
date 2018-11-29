@@ -24,4 +24,17 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(user.password).to.equal(password);
     });
   });
+
+  describe('Load a User from DB', () => {
+    it('Should return false if no user exist with the given email', async () => {
+      // Given
+      const email = 'notfound@notfound.com';
+
+      // When
+      const user = await store.loadUser(email);
+
+      // Then
+      expect(user).to.be.false();
+    });
+  });
 });
