@@ -44,9 +44,13 @@ class Store {
     return this.User.findOne({ email });
   }
 
-  nearShops({ lat, long }) {}
+  saveShop(name, image, coords) {
+    return this.Shop({ name, image, coords }).save();
+  }
 
-  addShopToPreferred(user, shop) {}
+  addToPreferred(userId, shopId) {}
+
+  nearShops({ lat, long }) {}
 
   removeShopFromPreferred(user, shop) {}
 

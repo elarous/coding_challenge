@@ -82,4 +82,21 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(user.password).to.equal(password);
     });
   });
+
+  describe('Saving a Shop', () => {
+    it('Should insert a user with the right infos', async () => {
+      // Given
+      const name = 'Shop 1';
+      const image = 'img1.jpg';
+      const coords = { lat: 1.5, long: 2.3 };
+
+      // When
+      const shop = await store.saveShop(name, image, coords);
+
+      // Then
+      expect(shop.name).to.equal(name);
+      expect(shop.image).to.equal(image);
+      expect(shop.coords).to.include(coords);
+    });
+  });
 });
