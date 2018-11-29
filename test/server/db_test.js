@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 import '@babel/polyfill';
 import { expect } from 'chai';
@@ -34,7 +35,7 @@ describe('Testing the persistence layer (db Store)', () => {
       const user = await store.loadUser(email);
 
       // Then
-      expect(user).to.be.null();
+      expect(user).to.be.null;
     });
   });
 });

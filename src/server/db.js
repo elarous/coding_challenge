@@ -37,7 +37,9 @@ class Store {
     return this.User({ email, password }).save();
   }
 
-  loadUser(email, password = null) {}
+  loadUser(email, password = null) {
+    return this.User.findOne({ email });
+  }
 
   nearShops({ lat, long }) {}
 
