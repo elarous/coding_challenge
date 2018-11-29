@@ -8,21 +8,21 @@ class Store {
     this.db.on('error', console.error.bind(console, 'connection error:'));
     this.db.once('open', () => console.log('Connected to DB'));
 
-    const userSchema = mongoose.Schema({
+    const userSchema = new mongoose.Schema({
       email: String,
       password: String,
       preferredStores: [String],
       dislikedStores: [{ store: String, timestamp: Date }]
     });
 
-    const shopSchema = mongoose.Schema({
+    const shopSchema = new mongoose.Schema({
       name: String,
       image: String,
       coords: { lat: Number, long: Number }
     });
 
-    this.User = mongoose.model(userSchema);
-    this.Shop = mongoose.model(shopSchema);
+    this.User = mongoose.model('User', userSchema);
+    this.Shop = mongoose.model('Shop', shopSchema);
   }
 
   get userModel() {
@@ -33,7 +33,9 @@ class Store {
     return this.Shop;
   }
 
-  saveUser(email, password) {}
+  saveUser(email, password) {
+    return this.User({ email, password }).save();
+  }
 
   userExists(email, password = null) {}
 
@@ -47,3 +49,5 @@ class Store {
 
   getPreffered(user) {}
 }
+
+export default Store;
