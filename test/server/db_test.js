@@ -34,7 +34,7 @@ describe('Testing the persistence layer (db Store)', () => {
       const user = await store.loadUser(email);
 
       // Then
-      expect(user).to.be.false();
+      expect(user).to.be.null();
     });
   });
 });
