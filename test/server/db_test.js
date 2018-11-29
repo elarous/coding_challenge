@@ -23,6 +23,8 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(user.email).to.equal(email);
       expect(user.password).to.equal(password);
+      expect(user.preferredShops).to.be.an('array').that.is.empty;
+      expect(user.dislikedShops).to.be.an('array').that.is.empty;
     });
   });
 

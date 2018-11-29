@@ -12,7 +12,7 @@ class Store {
       email: String,
       password: String,
       preferredShops: [String],
-      dislikedShop: [{ shop: String, timestamp: Date }]
+      dislikedShops: [{ shop: String, timestamp: Date }]
     });
 
     const shopSchema = new mongoose.Schema({
