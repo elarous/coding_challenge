@@ -121,7 +121,7 @@ describe('Testing the persistence layer (db Store)', () => {
   });
 
   describe('Preferred Shops', () => {
-    it('Should add a shop to a user\'s preferred shops', async () => {
+    it("Should add a shop to a user's preferred shops", async () => {
       // Given
       const user = await store.saveUser('test@test.com', 'random_pass');
       const shop = await store.saveShop('Shop 1', 'img1.jpg', { lat: 1.1, long: 2.2 });
@@ -130,7 +130,9 @@ describe('Testing the persistence layer (db Store)', () => {
       const updatedUser = await store.addToPreferred(user._id, shop._id);
 
       // Then
-      expect(updatedUser.preferredShops).is.an('array').that.includes(shop._id);
+      expect(updatedUser.preferredShops)
+        .is.an('array')
+        .that.includes(shop._id);
     });
 
     it('Should load preferred shops of the given user', async () => {
@@ -147,6 +149,19 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(shops[0].name).to.equal('Shop 1');
       expect(shops[1].name).to.equal('Shop 2');
+    });
+
+    it("Should remove a shop from user's preferred list", async () => {
+      // Given
+      const user = await store.saveUser('test@test.com', 'random_pass');
+      const shop = await store.saveShop('Shop 1', 'img1.jpg', { lat: 1.1, long: 2.2 });
+      await store.addToPreferred(user._id, shop._id);
+
+      // When
+      const updatedUser = await store.removeFromPreferred(user._id, shop._id);
+
+      // Then
+      expect(updatedUser.preferredShops).is.an('array').that.is.empty;
     });
   });
 });

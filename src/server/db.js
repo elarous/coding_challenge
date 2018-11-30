@@ -74,9 +74,15 @@ class Store {
     });
   }
 
-  nearShops({ lat, long }) {}
+  removeFromPreferred(userId, shopId) {
+    return this.User.findByIdAndUpdate(
+      userId,
+      { $pull: { preferredShops: shopId } },
+      { new: true, upsert: true }
+    ).exec();
+  }
 
-  removeShopFromPreferred(user, shop) {}
+  nearShops({ lat, long }) {}
 
   addToDisliked(user, shop) {}
 }
