@@ -6,10 +6,19 @@ import { expect } from 'chai';
 import Store from '../../src/server/db';
 
 let store = null;
+let testdb = null;
+const dbUrl = 'mongodb://localhost/ccdb';
 
 describe('Testing the persistence layer (db Store)', () => {
   before(() => {
-    store = new Store();
+    store = new Store(dbUrl);
+    testdb = store.db;
+    testdb.collection('users').remove({});
+    testdb.collection('shops').remove({});
+  });
+
+  after(() => {
+    testdb.close();
   });
 
   describe('Saving a User', () => {
@@ -30,7 +39,7 @@ describe('Testing the persistence layer (db Store)', () => {
   });
 
   describe('Load a User from DB', () => {
-    it('Should return false if no user exist with the given email', async () => {
+    it('Should return null if no user exist with the given email', async () => {
       // Given
       const email = 'notfound@notfound.com';
 
@@ -104,7 +113,7 @@ describe('Testing the persistence layer (db Store)', () => {
   describe('Retrieving a Shop', () => {
     it("Should return a shop using it's id", async () => {
       // Given
-      const name = 'Shop 1';
+      const name = 'Shop 2';
       const image = 'img1.jpg';
       const coords = { lat: 1.5, long: 2.3 };
       const shop = await store.saveShop(name, image, coords);
@@ -123,8 +132,8 @@ describe('Testing the persistence layer (db Store)', () => {
   describe('Preferred Shops', () => {
     it("Should add a shop to a user's preferred shops", async () => {
       // Given
-      const user = await store.saveUser('test@test.com', 'random_pass');
-      const shop = await store.saveShop('Shop 1', 'img1.jpg', { lat: 1.1, long: 2.2 });
+      const user = await store.saveUser('test1@test1.com', 'random_pass');
+      const shop = await store.saveShop('Shop 3', 'img1.jpg', { lat: 1.1, long: 2.2 });
 
       // When
       const updatedUser = await store.addToPreferred(user._id, shop._id);
@@ -137,9 +146,9 @@ describe('Testing the persistence layer (db Store)', () => {
 
     it('Should load preferred shops of the given user', async () => {
       // Given
-      const user = await store.saveUser('test@test.com', 'random_pass');
-      const shop1 = await store.saveShop('Shop 1', 'img1.jpg', { lat: 1.1, long: 2.2 });
-      const shop2 = await store.saveShop('Shop 2', 'img2.jpg', { lat: 3.3, long: 4.4 });
+      const user = await store.saveUser('test2@test2.com', 'random_pass');
+      const shop1 = await store.saveShop('Shop 4', 'img1.jpg', { lat: 1.1, long: 2.2 });
+      const shop2 = await store.saveShop('Shop 5', 'img2.jpg', { lat: 3.3, long: 4.4 });
       await store.addToPreferred(user._id, shop1._id);
       await store.addToPreferred(user._id, shop2._id);
 
@@ -147,14 +156,14 @@ describe('Testing the persistence layer (db Store)', () => {
       const shops = await store.loadPreferredShops(user._id);
 
       // Then
-      expect(shops[0].name).to.equal('Shop 1');
-      expect(shops[1].name).to.equal('Shop 2');
+      expect(shops[0].name).to.equal('Shop 4');
+      expect(shops[1].name).to.equal('Shop 5');
     });
 
-    it("Should remove a shop from user's preferred list", async () => {
+    it('Should remove a shop from user\'s preferred list', async () => {
       // Given
-      const user = await store.saveUser('test@test.com', 'random_pass');
-      const shop = await store.saveShop('Shop 1', 'img1.jpg', { lat: 1.1, long: 2.2 });
+      const user = await store.saveUser('tes3t@test3.com', 'random_pass');
+      const shop = await store.saveShop('Shop 6', 'img1.jpg', { lat: 1.1, long: 2.2 });
       await store.addToPreferred(user._id, shop._id);
 
       // When
@@ -162,6 +171,21 @@ describe('Testing the persistence layer (db Store)', () => {
 
       // Then
       expect(updatedUser.preferredShops).is.an('array').that.is.empty;
+    });
+  });
+
+  describe('Disliked Shops', () => {
+    it('Should add a shop to user\'s disliked shops list', async () => {
+      // Given
+      const user = await store.saveUser('test4@test4.com', 'random_pass');
+      const shop = await store.saveShop('Shop 7', 'img1.jpg', { lat: 1.1, long: 2.2 });
+
+      // When
+      const updatedUser = await store.addToDisliked(user._id, shop._id);
+
+      // Then
+      expect(updatedUser.dislikedShops).is.an('array').that.have.lengthOf(1);
+      expect(updatedUser.dislikedShops[0]._id.str).is.equal(shop._id.str);
     });
   });
 });

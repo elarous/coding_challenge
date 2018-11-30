@@ -1,28 +1,32 @@
 import mongoose from 'mongoose';
 
 class Store {
-  constructor() {
-    mongoose.connect('mongodb://localhost/ccdb');
-    this.db = mongoose.connection;
+  constructor(dbUrl) {
+    mongoose.connect(dbUrl);
+    this.mdb = mongoose.connection;
 
-    this.db.on('error', console.error.bind(console, 'connection error:'));
-    this.db.once('open', () => console.log('Connected to DB'));
+    this.mdb.on('error', console.error.bind(console, 'connection error:'));
+    this.mdb.once('open', () => console.log('Connected to DB'));
 
     const userSchema = new mongoose.Schema({
-      email: String,
+      email: { type: String, unique: true },
       password: String,
       preferredShops: [String],
       dislikedShops: [{ shop: String, timestamp: Date }]
     });
 
     const shopSchema = new mongoose.Schema({
-      name: String,
+      name: { type: String, unique: true },
       image: String,
       coords: { lat: Number, long: Number }
     });
 
     this.User = mongoose.model('User', userSchema);
     this.Shop = mongoose.model('Shop', shopSchema);
+  }
+
+  get db() {
+    return this.mdb;
   }
 
   get userModel() {
@@ -82,9 +86,17 @@ class Store {
     ).exec();
   }
 
+  addToDisliked(userId, shopId) {
+    return this.User.findByIdAndUpdate(
+      userId,
+      { $push: { dislikedShops: shopId } },
+      { new: true, upsert: true }
+    ).exec();
+  }
+
   nearShops({ lat, long }) {}
 
-  addToDisliked(user, shop) {}
+  
 }
 
 export default Store;
