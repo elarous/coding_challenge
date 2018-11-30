@@ -223,5 +223,20 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(shops[0].name).to.equal(parisShop.name);
       expect(shops[1].name).to.equal(moscowShop.name);
     });
+
+    it('Should filter out disliked shops of the nearest shops', async () => {
+      // Given
+      const shop = await store.saveShop('Shop 10', 'img1.jpg', { lat: 48.864716, long: 2.349014 });
+      const user = await store.saveUser('test6@test6.com', 'random_pass');
+      await store.addToDisliked(user._id, shop._id);
+      const marrakesh = { long: -7.973328, lat: 31.669746 };
+      const nearShops = await store.nearShops(marrakesh);
+
+      // When
+      const newShops = await store.filterOutDisliked(user._id, nearShops);
+
+      // Then
+      expect(newShops).to.be.an('array').that.have.lengthOf(0);
+    });
   });
 });
