@@ -89,7 +89,16 @@ class Store {
   addToDisliked(userId, shopId) {
     return this.User.findByIdAndUpdate(
       userId,
-      { $push: { dislikedShops: shopId } },
+      {
+        $push:
+        {
+          dislikedShops:
+          {
+            shop: shopId,
+            timestamp: new Date()
+          }
+        }
+      },
       { new: true, upsert: true }
     ).exec();
   }

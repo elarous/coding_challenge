@@ -185,7 +185,21 @@ describe('Testing the persistence layer (db Store)', () => {
 
       // Then
       expect(updatedUser.dislikedShops).is.an('array').that.have.lengthOf(1);
-      expect(updatedUser.dislikedShops[0]._id.str).is.equal(shop._id.str);
+      expect(updatedUser.dislikedShops[0].shop).is.equal(shop._id.toString());
+    });
+
+    it('Should add a timestamp when adding a shop to the user\'s disliked list', async () => {
+      // Given
+      const user = await store.saveUser('test5@test5.com', 'random_password');
+      const shop = await store.saveShop('Shop 8', 'img1.jpg', { lat: 1.1, long: 2.2 });
+      const currentTime = new Date();
+
+      // When
+      const updatedUser = await store.addToDisliked(user._id, shop._id);
+
+      // Then
+      expect(updatedUser.dislikedShops[0].timestamp).is.a('Date');
+      expect(+updatedUser.dislikedShops[0].timestamp).to.be.at.least(+currentTime);
     });
   });
 });
