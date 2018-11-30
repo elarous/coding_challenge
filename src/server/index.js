@@ -1,7 +1,8 @@
-import '@babel/polyfill';
-
-const express = require('express');
-const os = require('os');
+import express from 'express';
+import bodyParser from 'body-parser';
+import passport from 'passport';
+import session from 'express-session';
+import LocalStrategy from 'passport-local';
 
 const app = express();
 
