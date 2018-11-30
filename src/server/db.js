@@ -96,16 +96,14 @@ class Store {
     ).exec();
   }
 
-  addToDisliked(userId, shopId) {
+  addToDisliked(userId, shopId, timestamp = new Date()) {
     return this.User.findByIdAndUpdate(
       userId,
       {
-        $push:
-        {
-          dislikedShops:
-          {
+        $push: {
+          dislikedShops: {
             shop: shopId,
-            timestamp: new Date()
+            timestamp
           }
         }
       },
@@ -115,23 +113,29 @@ class Store {
 
   nearShops({ lat, long }) {
     return new Promise((resolve, reject) => {
-      this.db.collection('shops').find(
-        {
-          location:
-            {
-              $near:
-                {
-                  $geometry: { type: 'Point', coordinates: [long, lat] }
-                }
+      this.db
+        .collection('shops')
+        .find({
+          location: {
+            $near: {
+              $geometry: { type: 'Point', coordinates: [long, lat] }
             }
-        }
-      ).toArray((err, docs) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(docs);
-      });
+          }
+        })
+        .toArray((err, docs) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(docs);
+        });
     });
+  }
+
+  static moreThanTwoHours(dislikedShops, shop) {
+    const dislikeInfos = dislikedShops.filter(ds => ds.shop === shop._id.toString())[0];
+    const twoHours = 2 * 60 * 60 * 1000;
+
+    return +Date.now() - +dislikeInfos.timestamp >= twoHours;
   }
 
   filterOutDisliked(userId, shops) {
@@ -139,9 +143,10 @@ class Store {
       this.User.findById(userId)
         .exec()
         .then((user) => {
-          const filteredShops = shops.filter(
-            shop => user.dislikedShops.includes(shop._id.toString())
-          );
+          const filteredShops = shops.filter(shop => (
+            !user.dislikedShops.map(sObj => sObj.shop).includes(shop._id)
+              && Store.moreThanTwoHours(user.dislikedShops, shop)
+          ));
           resolve(filteredShops);
         })
         .catch(err => reject(err));

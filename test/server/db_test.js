@@ -32,7 +32,6 @@ const parisCoords = { lat: 48.864716, long: 2.349014 };
 let moscowShop = null;
 let parisShop = null;
 
-
 describe('Testing the persistence layer (db Store)', () => {
   before(async () => {
     store = new Store(dbUrl);
@@ -51,7 +50,7 @@ describe('Testing the persistence layer (db Store)', () => {
     await testdb.collection('shops').remove({});
 
     sami = await store.saveUser(samiEmail, samiPassword);
-    moscowShop = await store.saveShop(moscowName, moscowImage, moscowCoords); 
+    moscowShop = await store.saveShop(moscowName, moscowImage, moscowCoords);
   });
 
   describe('Saving a User', () => {
@@ -145,8 +144,10 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(retrievedShop.name).to.equal(moscowName);
       expect(retrievedShop.image).to.equal(moscowImage);
-      expect(retrievedShop.location.coordinates)
-        .to.include.members([moscowCoords.lat, moscowCoords.long]);
+      expect(retrievedShop.location.coordinates).to.include.members([
+        moscowCoords.lat,
+        moscowCoords.long
+      ]);
       expect(retrievedShop._id).to.deep.equal(moscowShop._id);
     });
   });
@@ -182,7 +183,7 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(shops[1].name).to.equal(parisName);
     });
 
-    it('Should remove a shop from user\'s preferred list', async () => {
+    it("Should remove a shop from user's preferred list", async () => {
       // Given
       /* user sami already in db */
       /* moscow shop alrady in db */
@@ -197,7 +198,7 @@ describe('Testing the persistence layer (db Store)', () => {
   });
 
   describe('Disliked Shops', () => {
-    it('Should add a shop to user\'s disliked shops list', async () => {
+    it("Should add a shop to user's disliked shops list", async () => {
       // Given
       /* user sami already in db */
       /* shop moscow already in db */
@@ -206,11 +207,13 @@ describe('Testing the persistence layer (db Store)', () => {
       const updatedUser = await store.addToDisliked(sami._id, moscowShop._id);
 
       // Then
-      expect(updatedUser.dislikedShops).is.an('array').that.have.lengthOf(1);
+      expect(updatedUser.dislikedShops)
+        .is.an('array')
+        .that.have.lengthOf(1);
       expect(updatedUser.dislikedShops[0].shop).is.equal(moscowShop._id.toString());
     });
 
-    it('Should add a timestamp when adding a shop to the user\'s disliked list', async () => {
+    it("Should add a timestamp when adding a shop to the user's disliked list", async () => {
       // Given
       /* user sami already in db */
       /* shop moscow already in db */
@@ -250,7 +253,30 @@ describe('Testing the persistence layer (db Store)', () => {
       const newShops = await store.filterOutDisliked(sami._id, nearShops);
 
       // Then
-      expect(newShops).to.be.an('array').that.have.lengthOf(0);
+      expect(newShops)
+        .to.be.an('array')
+        .that.have.lengthOf(0);
+    });
+
+    it('Should exlude disliked shops only if they were disliked in less than 2 hours', async () => {
+      // Given
+      /* user sami already in db */
+      /* moscow shop already in db */
+      const fiveHoursAgo = +Date.now() - 5 * 60 * 60 * 1000;
+      const now = Date.now();
+      parisShop = await store.saveShop(parisName, parisImage, parisCoords);
+      await store.addToDisliked(sami._id, moscowShop._id, fiveHoursAgo);
+      await store.addToDisliked(sami._id, parisShop._id, now);
+      const nearShops = await store.nearShops(marrakesh);
+
+      // When
+      const newShops = await store.filterOutDisliked(sami._id, nearShops);
+
+      // Then
+      expect(newShops)
+        .to.be.an('array')
+        .that.have.lengthOf(1);
+      expect(newShops[0].name).to.equal(moscowName);
     });
   });
 });
