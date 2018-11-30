@@ -21,6 +21,12 @@ describe('Testing the persistence layer (db Store)', () => {
     testdb.close();
   });
 
+  beforeEach(function beforeEachHook() {
+    this.timeout(500);
+    testdb.collection('users').remove({});
+    testdb.collection('shops').remove({});
+  });
+
   describe('Saving a User', () => {
     it('Should insert a user with the right infos', async () => {
       // Given
@@ -106,7 +112,7 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(shop.name).to.equal(name);
       expect(shop.image).to.equal(image);
-      expect(shop.coords).to.include(coords);
+      expect(shop.location.coordinates).to.include.members([coords.lat, coords.long]);
     });
   });
 
@@ -124,7 +130,7 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(retrievedShop.name).to.equal(name);
       expect(retrievedShop.image).to.equal(image);
-      expect(retrievedShop.coords).to.include(coords);
+      expect(retrievedShop.location.coordinates).to.include.members([coords.lat, coords.long]);
       expect(retrievedShop._id).to.deep.equal(shop._id);
     });
   });
@@ -200,6 +206,22 @@ describe('Testing the persistence layer (db Store)', () => {
       // Then
       expect(updatedUser.dislikedShops[0].timestamp).is.a('Date');
       expect(+updatedUser.dislikedShops[0].timestamp).to.be.at.least(+currentTime);
+    });
+  });
+
+  describe('Listing Shops', () => {
+    it('Should get nearest shops', async () => {
+      // Given
+      const moscowShop = await store.saveShop('Shop 9', 'img1.jpg', { long: 37.618423, lat: 55.751244 });
+      const parisShop = await store.saveShop('Shop 10', 'img1.jpg', { lat: 48.864716, long: 2.349014 });
+      const marrakesh = { long: -7.973328, lat: 31.669746 };
+
+      // When
+      const shops = await store.nearShops(marrakesh);
+
+      // Then
+      expect(shops[0].name).to.equal(parisShop.name);
+      expect(shops[1].name).to.equal(moscowShop.name);
     });
   });
 });

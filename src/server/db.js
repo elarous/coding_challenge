@@ -18,8 +18,13 @@ class Store {
     const shopSchema = new mongoose.Schema({
       name: { type: String, unique: true },
       image: String,
-      coords: { lat: Number, long: Number }
+      location: {
+        type: { type: String },
+        coordinates: []
+      }
     });
+
+    shopSchema.index({ location: '2dsphere' });
 
     this.User = mongoose.model('User', userSchema);
     this.Shop = mongoose.model('Shop', shopSchema);
@@ -48,8 +53,12 @@ class Store {
     return this.User.findOne({ email });
   }
 
-  saveShop(name, image, coords) {
-    return this.Shop({ name, image, coords }).save();
+  saveShop(name, image, { lat, long }) {
+    return this.Shop({
+      name,
+      image,
+      location: { type: 'Point', coordinates: [long, lat] }
+    }).save();
   }
 
   getShopById(id) {
@@ -103,9 +112,26 @@ class Store {
     ).exec();
   }
 
-  nearShops({ lat, long }) {}
-
-  
+  nearShops({ lat, long }) {
+    return new Promise((resolve, reject) => {
+      this.db.collection('shops').find(
+        {
+          location:
+            {
+              $near:
+                {
+                  $geometry: { type: 'Point', coordinates: [long, lat] }
+                }
+            }
+        }
+      ).toArray((err, docs) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(docs);
+      });
+    });
+  }
 }
 
 export default Store;
