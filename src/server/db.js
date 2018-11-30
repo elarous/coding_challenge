@@ -60,13 +60,25 @@ class Store {
     ).exec();
   }
 
+  loadPreferredShops(userId) {
+    return new Promise((resolve, reject) => {
+      this.User.findById(userId)
+        .exec()
+        .then((user) => {
+          this.Shop.find({ _id: { $in: user.preferredShops } })
+            .exec()
+            .then(shops => resolve(shops))
+            .catch(err => reject(err));
+        })
+        .catch(err => reject(err));
+    });
+  }
+
   nearShops({ lat, long }) {}
 
   removeShopFromPreferred(user, shop) {}
 
   addToDisliked(user, shop) {}
-
-  getPreffered(user) {}
 }
 
 export default Store;
