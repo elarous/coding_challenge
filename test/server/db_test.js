@@ -243,6 +243,22 @@ describe('Testing the persistence layer (db Store)', () => {
       expect(shops[1].name).to.equal(moscowShop.name);
     });
 
+    it('Should filter out preferred shops of the nearest shops', async () => {
+      // Given
+      /* user sami already in db */
+      /* moscow shop already in db */
+      await store.addToPreferred(sami._id, moscowShop._id);
+      const nearShops = await store.nearShops(marrakesh);
+
+      // When
+      const newShops = await store.filterOutPreferred(sami._id, nearShops);
+
+      // Then
+      expect(newShops)
+        .to.be.an('array')
+        .that.have.lengthOf(0);
+    });
+
     it('Should filter out disliked shops of the nearest shops', async () => {
       // Given
       /* user sami already in db */

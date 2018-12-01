@@ -146,6 +146,16 @@ describe('Features That Needs Authentication', () => {
         .catch(err => done(err));
     });
 
-    // to add ; exclude preferred shops form the nearby shops
+    it('Should exclude preferred shops from the list of nearby shops', async () => {
+      const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
+      await store.addToPreferred(currentUser._id, tokyoShop._id);
+      agent
+        .get('/shops/nearby/121.473701/31.230391') // Shanghai again :)
+        .then((res) => {
+          expect(res).to.have.status(200);
+          expect(res.body[0].name).to.not.equal('Shop 4 Tokyo');
+        })
+        .catch(err => console.log(err));
+    });
   });
 });

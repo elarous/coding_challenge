@@ -55,7 +55,8 @@ app.post('/register', async (req, res) => {
 
 async function getNearShops(userId, long, lat) {
   const nearShops = await store.nearShops({ long, lat });
-  return store.filterOutDisliked(userId, nearShops);
+  const dislikedExcluded = await store.filterOutDisliked(userId, nearShops);
+  return store.filterOutPreferred(userId, dislikedExcluded);
 }
 
 app.get('/shops/nearby', async (req, res) => {

@@ -161,6 +161,23 @@ class Store {
         .catch(err => reject(err));
     });
   }
+
+  static shopWithinPreferred(idsStr, shopId) {
+    const ids = idsStr.map(id => new ObjectId(id));
+    return ids.some(id => id.equals(shopId));
+  }
+
+  filterOutPreferred(userId, shops) {
+    return new Promise((resolve, reject) => {
+      this.User.findById(userId)
+        .exec()
+        .then((user) => {
+          const filteredShops = shops.filter(shop => !Store.shopWithinPreferred(user.preferredShops, shop._id));
+          resolve(filteredShops);
+        })
+        .catch(err => reject(err));
+    });
+  }
 }
 
 function getStore(type = 'test') {
