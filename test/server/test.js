@@ -143,7 +143,7 @@ describe('Features That Needs Authentication', () => {
           expect(res).to.have.status(200);
           expect(res.body[0].name).to.not.equal('Shop 4 Tokyo');
         })
-        .catch(err => done(err));
+        .catch(err => console.log(err));
     });
 
     it('Should exclude preferred shops from the list of nearby shops', async () => {

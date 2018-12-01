@@ -142,41 +142,38 @@ class Store {
     return +Date.now() - +dislikeInfos.timestamp >= twoHours;
   }
 
-  static shopWithinDisliked(idsStr, shopId) {
+  static shopWithin(idsStr, shopId) {
     const ids = idsStr.map(id => new ObjectId(id));
     return ids.some(id => id.equals(shopId));
+  }
+
+  filterOut(userId, shops, predicate) {
+    return new Promise((resolve, reject) => {
+      this.User.findById(userId)
+        .exec()
+        .then((user) => {
+          const filteredShops = shops.filter(shop => predicate(user, shop));
+          resolve(filteredShops);
+        })
+        .catch(err => reject(err));
+    });
   }
 
   filterOutDisliked(userId, shops) {
-    return new Promise((resolve, reject) => {
-      this.User.findById(userId)
-        .exec()
-        .then((user) => {
-          const filteredShops = shops.filter(
-            shop => !Store.shopWithinDisliked(user.dislikedShops.map(sObj => sObj.shop), shop._id)
-              || Store.moreThanTwoHours(user.dislikedShops, shop)
-          );
-          resolve(filteredShops);
-        })
-        .catch(err => reject(err));
-    });
-  }
-
-  static shopWithinPreferred(idsStr, shopId) {
-    const ids = idsStr.map(id => new ObjectId(id));
-    return ids.some(id => id.equals(shopId));
+    return this.filterOut(
+      userId,
+      shops,
+      (user, shop) => !Store.shopWithin(user.dislikedShops.map(sObj => sObj.shop), shop._id)
+        || Store.moreThanTwoHours(user.dislikedShops, shop)
+    );
   }
 
   filterOutPreferred(userId, shops) {
-    return new Promise((resolve, reject) => {
-      this.User.findById(userId)
-        .exec()
-        .then((user) => {
-          const filteredShops = shops.filter(shop => !Store.shopWithinPreferred(user.preferredShops, shop._id));
-          resolve(filteredShops);
-        })
-        .catch(err => reject(err));
-    });
+    return this.filterOut(
+      userId,
+      shops,
+      (user, shop) => !Store.shopWithin(user.preferredShops, shop._id)
+    );
   }
 }
 
