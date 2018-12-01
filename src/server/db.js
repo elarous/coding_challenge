@@ -7,12 +7,13 @@ let storeProd;
 
 class Store {
   constructor(dbUrl = 'mongodb://localhost/ccdb') {
+    // connect to mongo
     mongoose.connect(dbUrl);
     this.mdb = mongoose.connection;
-
     this.mdb.on('error', console.error.bind(console, 'connection error:'));
     this.mdb.once('open', () => console.log('Connected to DB'));
 
+    /* Schemas */
     const userSchema = new mongoose.Schema({
       email: { type: String, unique: true },
       password: String,
@@ -28,13 +29,15 @@ class Store {
         coordinates: []
       }
     });
-
+    // index for the geo json queries
     shopSchema.index({ location: '2dsphere' });
 
+    // create models
     this.User = mongoose.model('User', userSchema);
     this.Shop = mongoose.model('Shop', shopSchema);
   }
 
+  // exposing this three references for testing
   get db() {
     return this.mdb;
   }
@@ -47,10 +50,13 @@ class Store {
     return this.Shop;
   }
 
+  // add a user to db
   saveUser(email, password) {
     return this.User({ email, password }).save();
   }
 
+  // find a user by email (to check if a user with that email already exists)
+  // or by the email and password pair (to authenticate user)
   loadUser(email, password = null) {
     if (password) {
       return this.User.findOne({ email, password });
@@ -58,6 +64,7 @@ class Store {
     return this.User.findOne({ email });
   }
 
+  // add a shop to db
   saveShop(name, image, { lat, long }) {
     return this.Shop({
       name,
@@ -66,10 +73,12 @@ class Store {
     }).save();
   }
 
+  // find shop by id
   getShopById(id) {
     return this.Shop.findById(id);
   }
 
+  // add a shop to the user's list of preferred shops
   addToPreferred(userId, shopId) {
     return this.User.findByIdAndUpdate(
       userId,
@@ -78,6 +87,7 @@ class Store {
     ).exec();
   }
 
+  // get prefered shops of a user
   loadPreferredShops(userId) {
     return new Promise((resolve, reject) => {
       this.User.findById(userId)
@@ -92,6 +102,7 @@ class Store {
     });
   }
 
+  // remove a shop from the user's preferred list
   removeFromPreferred(userId, shopId) {
     return this.User.findByIdAndUpdate(
       userId,
@@ -100,6 +111,7 @@ class Store {
     ).exec();
   }
 
+  // when a user dislikes a shop
   addToDisliked(userId, shopId, timestamp = new Date()) {
     return this.User.findByIdAndUpdate(
       userId,
@@ -115,6 +127,7 @@ class Store {
     ).exec();
   }
 
+  // get near shops to the given point
   nearShops({ lat, long }) {
     return new Promise((resolve, reject) => {
       this.db
@@ -135,10 +148,12 @@ class Store {
     });
   }
 
-  static moreThanTwoHours(dislikedShops, shop) {
+  // return true if `shop` was disliked for more than 2 hours ago
+  static dislikedAbove2Hours(dislikedShops, shop) {
     const dislikeInfos = dislikedShops.filter(ds => new ObjectId(ds.shop).equals(shop._id))[0];
     const twoHours = 2 * 60 * 60 * 1000;
 
+    // should probably get time as utc
     return +Date.now() - +dislikeInfos.timestamp >= twoHours;
   }
 
@@ -164,7 +179,7 @@ class Store {
       userId,
       shops,
       (user, shop) => !Store.shopWithin(user.dislikedShops.map(sObj => sObj.shop), shop._id)
-        || Store.moreThanTwoHours(user.dislikedShops, shop)
+        || Store.dislikedAbove2Hours(user.dislikedShops, shop)
     );
   }
 
@@ -177,6 +192,7 @@ class Store {
   }
 }
 
+// a function to make Store a singleton
 function getStore(type = 'test') {
   if (type === 'test') {
     if (storeTest) {
