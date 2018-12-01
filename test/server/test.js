@@ -49,31 +49,33 @@ describe('User Authentication', () => {
         });
     });
 
-    it('Should return an error when signing up with an email that already exists', (done) => {
-      store.saveUser(email, password);
-      chai
-        .request(server)
-        .post('/register')
-        .send({ email, password })
-        .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.deep.equal({ error: 'Email Already Exists' });
-          done();
-        });
-    });
+    describe('Visitor can sign up using email and password', () => {
+      it('Should return an error when signing up with an email that already exists', (done) => {
+        store.saveUser(email, password);
+        chai
+          .request(server)
+          .post('/register')
+          .send({ email, password })
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res).to.be.json;
+            expect(res.body).to.deep.equal({ error: 'Email Already Exists' });
+            done();
+          });
+      });
 
-    it('Should successfully register a user using email and password', (done) => {
-      chai
-        .request(server)
-        .post('/register')
-        .send({ email, password })
-        .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res).to.be.json;
-          expect(res.body).to.deep.equal({ success: 'User Registered Successfully' });
-          done();
-        });
+      it('Should successfully register a user using email and password', (done) => {
+        chai
+          .request(server)
+          .post('/register')
+          .send({ email, password })
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res).to.be.json;
+            expect(res.body).to.deep.equal({ success: 'User Registered Successfully' });
+            done();
+          });
+      });
     });
   });
 });
