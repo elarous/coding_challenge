@@ -92,14 +92,28 @@ describe('Features That Needs Authentication', () => {
 
   beforeEach(() => {
     store.db.collection('shops').remove({});
+    const shops = [
+      ['Shop 1 Casablanca', 'img1.jpg', { long: -7.589843, lat: 33.573109 }],
+      ['Shop 2 Paris', 'img2.jpg', { long: 2.352222, lat: 48.856613 }],
+      ['Shop 3 Berlin', 'img3.jpg', { long: 13.404954, lat: 52.520008 }],
+      ['Shop 4 Tokyo', 'img4.jpg', { long: 139.691711, lat: 35.689487 }]
+    ];
+
+    shops.forEach((shop) => {
+      store.saveShop(shop[0], shop[1], shop[2]);
+    });
   });
 
   describe('Nearby Shops', () => {
-    it('test', (done) => {
+    it('Should get nearby shops without providing coords', (done) => {
       agent
-        .get('/test')
+        .get('/shops/nearby')
         .then((res) => {
           expect(res).to.have.status(200);
+          expect(res.body).is.an('array');
+          expect(res.body[0]).to.have.property('name');
+          expect(res.body[0]).to.have.property('image');
+          expect(res.body[0]).to.have.property('_id');
           done();
         })
         .catch(err => done(err));

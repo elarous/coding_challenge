@@ -52,6 +52,13 @@ app.post('/register', async (req, res) => {
   }
 });
 
+app.get('/shops/nearby', async (req, res) => {
+  // default to Rabat
+  const coords = { long: -6.849813, lat: 33.971588 };
+  const stores = await store.nearShops(coords);
+  res.json(stores);
+});
+
 app.use((req, res, next) => {
   res
     .status(404)
