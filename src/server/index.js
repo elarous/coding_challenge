@@ -141,6 +141,17 @@ app.post('/shops/preferred/remove/:shopId', async (req, res) => {
   }
 });
 
+app.get('/shops/preferred/', async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const shops = await store.loadPreferredShops(userId);
+
+    res.json(shops);
+  } catch (e) {
+    throw e;
+  }
+});
+
 app.use((req, res, next) => {
   res
     .status(404)

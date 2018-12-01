@@ -223,4 +223,22 @@ describe('Features That Needs Authentication', () => {
       }
     });
   });
+
+  describe('Listing Preferred Shops', () => {
+    it("Should list all user's preferred shops", async () => {
+      try {
+        await store.addToPreferred(currentUser._id, tokyoShop._id);
+        const res = await agent.get('/shops/preferred/');
+
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body)
+          .to.be.an('array')
+          .that.have.lengthOf(1);
+        expect(res.body[0].name).to.equal(tokyoShop.name);
+      } catch (e) {
+        throw e;
+      }
+    });
+  });
 });
