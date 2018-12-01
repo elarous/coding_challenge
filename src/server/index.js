@@ -42,36 +42,52 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  const { email } = req.body;
-  const { password } = req.body;
-  const user = await store.loadUser(email);
-  if (user) {
-    res.json({ error: 'Email Already Exists' });
-  } else {
-    store.saveUser(email, password);
-    res.json({ success: 'User Registered Successfully' });
+  try {
+    const { email } = req.body;
+    const { password } = req.body;
+    const user = await store.loadUser(email);
+    if (user) {
+      res.json({ error: 'Email Already Exists' });
+    } else {
+      await store.saveUser(email, password);
+      res.json({ success: 'User Registered Successfully' });
+    }
+  } catch (e) {
+    throw e;
   }
 });
 
 async function getNearShops(userId, long, lat) {
-  const nearShops = await store.nearShops({ long, lat });
-  const dislikedExcluded = await store.filterOutDisliked(userId, nearShops);
-  return store.filterOutPreferred(userId, dislikedExcluded);
+  try {
+    const nearShops = await store.nearShops({ long, lat });
+    const dislikedExcluded = await store.filterOutDisliked(userId, nearShops);
+    return store.filterOutPreferred(userId, dislikedExcluded);
+  } catch (e) {
+    throw e;
+  }
 }
 
 app.get('/shops/nearby', async (req, res) => {
-  // default to Rabat
-  const coords = { long: -6.849813, lat: 33.971588 };
-  const stores = await getNearShops(req.user._id, coords.long, coords.lat);
-  res.json(stores);
+  try {
+    // default to Rabat
+    const coords = { long: -6.849813, lat: 33.971588 };
+    const stores = await getNearShops(req.user._id, coords.long, coords.lat);
+    res.json(stores);
+  } catch (e) {
+    throw e;
+  }
 });
 
 app.get('/shops/nearby/:long/:lat', async (req, res) => {
-  const userId = req.user._id;
-  const long = +req.params.long;
-  const lat = +req.params.lat;
-  const shops = await getNearShops(userId, long, lat);
-  res.json(shops);
+  try {
+    const userId = req.user._id;
+    const long = +req.params.long;
+    const lat = +req.params.lat;
+    const shops = await getNearShops(userId, long, lat);
+    res.json(shops);
+  } catch (e) {
+    throw e;
+  }
 });
 
 app.use((req, res, next) => {
