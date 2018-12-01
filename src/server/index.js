@@ -93,12 +93,33 @@ app.get('/shops/nearby/:long/:lat', async (req, res) => {
 app.post('/shop/:shopId/like', async (req, res) => {
   try {
     const userId = req.user._id;
-    const { shopId } = req.params.shopId;
-    await store.addToPreferred(userId, shopId);
+    const { shopId } = req.params;
+    const user = await store.addToPreferred(userId, shopId);
 
-    res.json({ liked: true });
+    if (user) {
+      res.json({ liked: true });
+    } else {
+      res.json({ liked: false });
+    }
   } catch (e) {
     res.json({ liked: false });
+    throw e;
+  }
+});
+
+app.post('/shop/:shopId/dislike', async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { shopId } = req.params;
+    const user = await store.addToDisliked(userId, shopId);
+
+    if (user) {
+      res.json({ disliked: true });
+    } else {
+      res.json({ disliked: false });
+    }
+  } catch (e) {
+    res.json({ disliked: false });
     throw e;
   }
 });

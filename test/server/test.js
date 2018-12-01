@@ -10,7 +10,7 @@ import getStore from '../../src/server/db';
 
 chai.use(chaiHttp);
 let store;
-const agent = chai.request.agent(server);
+let agent;
 
 /* common variables */
 let currentUser;
@@ -102,11 +102,15 @@ describe('Features That Needs Authentication', () => {
       store = getStore('test', null);
       await store.db.collection('users').remove({});
       currentUser = await store.saveUser(email, password);
-
+      agent = chai.request.agent(server);
       await agent.post('/login').send({ username: email, password });
     } catch (e) {
       throw e;
     }
+  });
+
+  after(() => {
+    agent.close();
   });
 
   beforeEach(async () => {
@@ -192,7 +196,20 @@ describe('Features That Needs Authentication', () => {
 
         expect(res).to.have.status(200);
         expect(res).to.be.json;
-        expect(res).to.not.deep.equal({ liked: true });
+        expect(res.body).to.deep.equal({ liked: true });
+      } catch (e) {
+        throw e;
+      }
+    });
+
+    it('Should add a shop to user\'s disliked list after a dislike', async () => {
+      try {
+        const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
+        const res = await agent.post(`/shop/${tokyoShop._id}/dislike`);
+
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.deep.equal({ disliked: true });
       } catch (e) {
         throw e;
       }
