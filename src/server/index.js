@@ -59,6 +59,14 @@ app.get('/shops/nearby', async (req, res) => {
   res.json(stores);
 });
 
+app.get('/shops/nearby/:long/:lat', async (req, res) => {
+  const long = +req.params.long;
+  const lat = +req.params.lat;
+  const stores = await store.nearShops({ long, lat });
+
+  res.json(stores);
+});
+
 app.use((req, res, next) => {
   res
     .status(404)

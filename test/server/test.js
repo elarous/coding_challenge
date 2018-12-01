@@ -118,5 +118,17 @@ describe('Features That Needs Authentication', () => {
         })
         .catch(err => done(err));
     });
+
+    it('Should get nearby shops to a point using it\'s coordinates', (done) => {
+      agent
+        .get('/shops/nearby/121.473701/31.230391') // Shanghai, China coords
+        .then((res) => {
+          expect(res).to.have.status(200);
+          // nearest shop is the one in Tokyo
+          expect(res.body[0].name).to.equal('Shop 4 Tokyo');
+          done();
+        })
+        .catch(err => done(err));
+    });
   });
 });
