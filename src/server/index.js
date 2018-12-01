@@ -124,6 +124,23 @@ app.post('/shop/:shopId/dislike', async (req, res) => {
   }
 });
 
+app.post('/shops/preferred/remove/:shopId', async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { shopId } = req.params;
+    const user = await store.removeFromPreferred(userId, shopId);
+
+    if (user) {
+      res.json({ removed: true });
+    } else {
+      res.json({ removed: false });
+    }
+  } catch (e) {
+    res.json({ removed: false });
+    throw e;
+  }
+});
+
 app.use((req, res, next) => {
   res
     .status(404)

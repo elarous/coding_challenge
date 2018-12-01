@@ -14,6 +14,7 @@ let agent;
 
 /* common variables */
 let currentUser;
+let tokyoShop;
 const email = 'myemail@myemail.com';
 const password = '123456';
 
@@ -123,9 +124,8 @@ describe('Features That Needs Authentication', () => {
         ['Shop 4 Tokyo', 'img4.jpg', { long: 139.691711, lat: 35.689487 }]
       ];
 
-      shops.forEach((shop) => {
-        store.saveShop(shop[0], shop[1], shop[2]);
-      });
+      await Promise.all(shops.map(shop => store.saveShop(...shop)));
+      tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
     } catch (e) {
       throw e;
     }
@@ -161,7 +161,6 @@ describe('Features That Needs Authentication', () => {
 
     it('Should exclude disliked shops from the list of nearby shops', async () => {
       try {
-        const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
         await store.addToDisliked(currentUser._id, tokyoShop._id);
         // Shanghai again
         const res = await agent.get('/shops/nearby/121.473701/31.230391');
@@ -175,7 +174,6 @@ describe('Features That Needs Authentication', () => {
 
     it('Should exclude preferred shops from the list of nearby shops', async () => {
       try {
-        const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
         await store.addToPreferred(currentUser._id, tokyoShop._id);
         // Shanghai again :)
         const res = await agent.get('/shops/nearby/121.473701/31.230391');
@@ -191,7 +189,6 @@ describe('Features That Needs Authentication', () => {
   describe('Shop Operations', () => {
     it("Should add a shop to the user's preferred list after a like", async () => {
       try {
-        const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
         const res = await agent.post(`/shop/${tokyoShop._id}/like`);
 
         expect(res).to.have.status(200);
@@ -202,14 +199,25 @@ describe('Features That Needs Authentication', () => {
       }
     });
 
-    it('Should add a shop to user\'s disliked list after a dislike', async () => {
+    it("Should add a shop to user's disliked list after a dislike", async () => {
       try {
-        const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
         const res = await agent.post(`/shop/${tokyoShop._id}/dislike`);
 
         expect(res).to.have.status(200);
         expect(res).to.be.json;
         expect(res.body).to.deep.equal({ disliked: true });
+      } catch (e) {
+        throw e;
+      }
+    });
+
+    it("Should remove a shop from user's preferred list", async () => {
+      try {
+        const res = await agent.post(`/shops/preferred/remove/${tokyoShop._id}`);
+
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.deep.equal({ removed: true });
       } catch (e) {
         throw e;
       }
