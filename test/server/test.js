@@ -183,4 +183,19 @@ describe('Features That Needs Authentication', () => {
       }
     });
   });
+
+  describe('Shop Operations', () => {
+    it("Should add a shop to the user's preferred list after a like", async () => {
+      try {
+        const tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
+        const res = await agent.post(`/shop/${tokyoShop._id}/like`);
+
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res).to.not.deep.equal({ liked: true });
+      } catch (e) {
+        throw e;
+      }
+    });
+  });
 });

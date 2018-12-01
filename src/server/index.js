@@ -90,6 +90,19 @@ app.get('/shops/nearby/:long/:lat', async (req, res) => {
   }
 });
 
+app.post('/shop/:shopId/like', async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { shopId } = req.params.shopId;
+    await store.addToPreferred(userId, shopId);
+
+    res.json({ liked: true });
+  } catch (e) {
+    res.json({ liked: false });
+    throw e;
+  }
+});
+
 app.use((req, res, next) => {
   res
     .status(404)
