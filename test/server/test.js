@@ -3,16 +3,20 @@ import chai from 'chai';
 import { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../src/server/index';
-import Store from '../../src/server/db';
+import getStore from '../../src/server/db';
 
 chai.use(chaiHttp);
-
 let store;
 
 describe('User Authentication', () => {
   before(() => {
-    store = new Store(process.env.TEST_DB);
+    store = getStore('test', null);
   });
+  beforeEach(() => {
+    store.db.collection('users').remove({});
+    store.db.collection('shops').remove({});
+  });
+
   describe('User can login using email and password', () => {
     it('Should return unauthorized error when trying login with wrong credentils', (done) => {
       chai
@@ -26,9 +30,20 @@ describe('User Authentication', () => {
         });
     });
     it('Should authenticate the user with right credentials', (done) => {
-      const user = store.loadUser('sami@sami.com');
-      console.log(user);
-      expect(user).to.be.json;
+      const email = 'myemail@myemail.com';
+      const password = '123456';
+      store.saveUser(email, password);
+      chai
+        .request(server)
+        .post('/login')
+        .send({ username: email, password })
+        .end((err, res) => {
+          console.log(res.body);
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.deep.equal({ loggedIn: true });
+          done();
+        });
     });
   });
 });
