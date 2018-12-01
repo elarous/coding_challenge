@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import '@babel/polyfill';
 import chai from 'chai';
 import { expect } from 'chai';
 import chaiHttp from 'chai-http';
@@ -16,6 +17,7 @@ describe('User Authentication', () => {
   before(() => {
     store = getStore('test', null);
   });
+
   beforeEach(() => {
     store.db.collection('users').remove({});
     store.db.collection('shops').remove({});
@@ -57,6 +59,19 @@ describe('User Authentication', () => {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.deep.equal({ error: 'Email Already Exists' });
+          done();
+        });
+    });
+
+    it('Should successfully register a user using email and password', (done) => {
+      chai
+        .request(server)
+        .post('/register')
+        .send({ email, password })
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.deep.equal({ success: 'User Registered Successfully' });
           done();
         });
     });

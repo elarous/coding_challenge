@@ -40,8 +40,16 @@ app.post('/login', passport.authenticate('local'), (req, res) => {
   res.json({ loggedIn: true });
 });
 
-app.post('/register', (req, res) => {
-  res.json({ error: 'Email Already Exists' });
+app.post('/register', async (req, res) => {
+  const { email } = req.body;
+  const { password } = req.body;
+  const user = await store.loadUser(email);
+  if (user) {
+    res.json({ error: 'Email Already Exists' });
+  } else {
+    store.saveUser(email, password);
+    res.json({ success: 'User Registered Successfully' });
+  }
 });
 
 app.use((req, res, next) => {
