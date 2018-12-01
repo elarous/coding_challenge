@@ -7,8 +7,8 @@ import getStore from './db';
 
 const app = express();
 
-const storeType = (process.env.PROD) ? 'prod' : 'test';
-const dbUrl =  (process.env.PROD) ? process.env.PROD_DB : process.env.TEST_DB;
+const storeType = process.env.PROD ? 'prod' : 'test';
+const dbUrl = process.env.PROD ? process.env.PROD_DB : process.env.TEST_DB;
 const store = getStore(storeType, dbUrl);
 
 app.use(express.static('dist'));
@@ -38,6 +38,10 @@ app.get('/test', (req, res) => {
 
 app.post('/login', passport.authenticate('local'), (req, res) => {
   res.json({ loggedIn: true });
+});
+
+app.post('/register', (req, res) => {
+  res.json({ error: 'Email Already Exists' });
 });
 
 app.use((req, res, next) => {

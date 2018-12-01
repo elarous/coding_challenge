@@ -8,6 +8,10 @@ import getStore from '../../src/server/db';
 chai.use(chaiHttp);
 let store;
 
+/* common variables */
+const email = 'myemail@myemail.com';
+const password = '123456';
+
 describe('User Authentication', () => {
   before(() => {
     store = getStore('test', null);
@@ -30,18 +34,29 @@ describe('User Authentication', () => {
         });
     });
     it('Should authenticate the user with right credentials', (done) => {
-      const email = 'myemail@myemail.com';
-      const password = '123456';
       store.saveUser(email, password);
       chai
         .request(server)
         .post('/login')
         .send({ username: email, password })
         .end((err, res) => {
-          console.log(res.body);
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.deep.equal({ loggedIn: true });
+          done();
+        });
+    });
+
+    it('Should return an error when signing up with an email that already exists', (done) => {
+      store.saveUser(email, password);
+      chai
+        .request(server)
+        .post('/register')
+        .send({ email, password })
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.deep.equal({ error: 'Email Already Exists' });
           done();
         });
     });
