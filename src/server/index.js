@@ -25,15 +25,15 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 function ensureAuthenticated(req, res, next) {
-  console.log('New request !');
   if (req.isAuthenticated()) {
     return next();
   }
+  res.status(401);
   res.json({ error: 'You are not authenticated !' });
 }
 
-app.get('/test', (req, res) => {
-  res.send('good');
+app.get('/test', ensureAuthenticated, (req, res) => {
+  res.send('This is a test');
 });
 
 app.post('/login', passport.authenticate('local'), (req, res) => {

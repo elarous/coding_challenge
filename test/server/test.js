@@ -8,6 +8,7 @@ import getStore from '../../src/server/db';
 
 chai.use(chaiHttp);
 let store;
+const agent = chai.request.agent(server);
 
 /* common variables */
 const email = 'myemail@myemail.com';
@@ -76,6 +77,32 @@ describe('User Authentication', () => {
           expect(res.body).to.deep.equal({ success: 'User Registered Successfully' });
           done();
         });
+    });
+  });
+});
+
+describe('Features That Needs Authentication', () => {
+  before(async () => {
+    store = getStore('test', null);
+    store.db.collection('users').remove({});
+    store.saveUser(email, password);
+
+    await agent.post('/login').send({ username: email, password });
+  });
+
+  beforeEach(() => {
+    store.db.collection('shops').remove({});
+  });
+
+  describe('Nearby Shops', () => {
+    it('test', (done) => {
+      agent
+        .get('/test')
+        .then((res) => {
+          expect(res).to.have.status(200);
+          done();
+        })
+        .catch(err => done(err));
     });
   });
 });
