@@ -3,11 +3,10 @@
 /* eslint-disable no-undef */
 import '@babel/polyfill';
 import { expect } from 'chai';
-import Store from '../../src/server/db';
+import getStore from '../../src/server/db';
 
 let store = null;
 let testdb = null;
-const dbUrl = 'mongodb://localhost/ccdb';
 
 /* users */
 const samiPassword = '12345';
@@ -34,13 +33,15 @@ let parisShop = null;
 
 describe('Testing the persistence layer (db Store)', () => {
   before(async () => {
-    store = new Store(dbUrl);
+    store = getStore('test', null);
     testdb = store.db;
     testdb.collection('users').remove({});
     testdb.collection('shops').remove({});
   });
 
   after(() => {
+    testdb.collection('users').remove({});
+    testdb.collection('shops').remove({});
     testdb.close();
   });
 

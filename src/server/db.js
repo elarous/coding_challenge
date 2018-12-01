@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import mongoose from 'mongoose';
 
+let storeTest;
+let storeProd;
+
 class Store {
   constructor(dbUrl = 'mongodb://localhost/ccdb') {
     mongoose.connect(dbUrl);
@@ -143,10 +146,10 @@ class Store {
       this.User.findById(userId)
         .exec()
         .then((user) => {
-          const filteredShops = shops.filter(shop => (
-            !user.dislikedShops.map(sObj => sObj.shop).includes(shop._id)
+          const filteredShops = shops.filter(
+            shop => !user.dislikedShops.map(sObj => sObj.shop).includes(shop._id)
               && Store.moreThanTwoHours(user.dislikedShops, shop)
-          ));
+          );
           resolve(filteredShops);
         })
         .catch(err => reject(err));
@@ -154,4 +157,22 @@ class Store {
   }
 }
 
-export default Store;
+function getStore(type = 'test') {
+  if (type === 'test') {
+    if (storeTest) {
+      return storeTest;
+    }
+    storeTest = new Store(process.env.DB_TEST);
+    return storeTest;
+  }
+  if (type === 'prod') {
+    if (storeProd) {
+      return storeProd;
+    }
+    storeProd = new Store(process.env.DB_PROD);
+    return storeProd;
+  }
+  return null;
+}
+
+export default getStore;

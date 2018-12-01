@@ -3,10 +3,13 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import session from 'express-session';
 import LocalStrategy from 'passport-local';
-import Store from './db';
+import getStore from './db';
 
 const app = express();
-const store = new Store(process.env.DATABASE_URL);
+
+const storeType = (process.env.PROD) ? 'prod' : 'test';
+const dbUrl =  (process.env.PROD) ? process.env.PROD_DB : process.env.TEST_DB;
+const store = getStore(storeType, dbUrl);
 
 app.use(express.static('dist'));
 app.use(bodyParser.json());
