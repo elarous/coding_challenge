@@ -2,29 +2,30 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
 import '@babel/polyfill';
-import chai from 'chai';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../src/server/index';
 import getStore from '../../src/server/db';
 
 chai.use(chaiHttp);
-let store;
-let agent;
+
 
 /* common variables */
 let currentUser;
 let tokyoShop;
+let agent;
 const email = 'myemail@myemail.com';
 const password = '123456';
+const store = getStore('test'); // using a test database
 
 describe('User Authentication', () => {
   before(() => {
-    store = getStore('test', null);
+    // load the store with the test database
   });
 
   beforeEach(async () => {
     try {
+      // clean up 
       await store.db.collection('users').remove({});
       await store.db.collection('shops').remove({});
     } catch (e) {
@@ -57,6 +58,17 @@ describe('User Authentication', () => {
         expect(res).to.have.status(200);
         expect(res).to.be.json;
         expect(res.body).to.deep.equal({ loggedIn: true });
+      } catch (e) {
+        throw e;
+      }
+    });
+
+    it('Should logout the user', async () => {
+      try {
+        const res = await chai.request(server).post('/logout');
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.deep.equal({ loggedOut: true });
       } catch (e) {
         throw e;
       }
@@ -97,13 +109,16 @@ describe('User Authentication', () => {
   });
 });
 
-describe('Features That Needs Authentication', () => {
+describe('Features That Needs User Authentication', () => {
   before(async () => {
     try {
-      store = getStore('test', null);
+      // clean up by removing users and creating an authenticated user
+      // maybe this should be moved to beforeEach hook.
       await store.db.collection('users').remove({});
       currentUser = await store.saveUser(email, password);
+      // the agent to be used as an http client
       agent = chai.request.agent(server);
+      // authenticate
       await agent.post('/login').send({ username: email, password });
     } catch (e) {
       throw e;
@@ -117,6 +132,8 @@ describe('Features That Needs Authentication', () => {
   beforeEach(async () => {
     try {
       await store.db.collection('shops').remove({});
+      // dummy examples of shops, countries are used to give a sense of distance,
+      // it should be the same for any entity as far as it has coordinates
       const shops = [
         ['Shop 1 Casablanca', 'img1.jpg', { long: -7.589843, lat: 33.573109 }],
         ['Shop 2 Paris', 'img2.jpg', { long: 2.352222, lat: 48.856613 }],
@@ -124,7 +141,9 @@ describe('Features That Needs Authentication', () => {
         ['Shop 4 Tokyo', 'img4.jpg', { long: 139.691711, lat: 35.689487 }]
       ];
 
+      // save all shops
       await Promise.all(shops.map(shop => store.saveShop(...shop)));
+      // then retrieve the tokyo shop 
       tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
     } catch (e) {
       throw e;

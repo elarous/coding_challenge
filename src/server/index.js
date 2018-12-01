@@ -8,9 +8,9 @@ import getStore from './db';
 
 const app = express();
 
+// type of database (test or production)
 const storeType = process.env.PROD ? 'prod' : 'test';
-const dbUrl = process.env.PROD ? process.env.PROD_DB : process.env.TEST_DB;
-const store = getStore(storeType, dbUrl);
+const store = getStore(storeType);
 
 app.use(express.static('dist'));
 app.use(bodyParser.json());
@@ -25,6 +25,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// middleware to check if a user is authenticated
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -33,12 +34,13 @@ function ensureAuthenticated(req, res, next) {
   res.json({ error: 'You are not authenticated !' });
 }
 
-app.get('/test', ensureAuthenticated, (req, res) => {
-  res.send('This is a test');
-});
-
 app.post('/login', passport.authenticate('local'), (req, res) => {
   res.json({ loggedIn: true });
+});
+
+app.post('/logout', (req, res) => {
+  req.logout();
+  res.json({ loggedOut: true });
 });
 
 app.post('/register', async (req, res) => {
@@ -57,19 +59,24 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// get near shops for user with id userId, and who's located
+// in location with coordindates long and lat
 async function getNearShops(userId, long, lat) {
   try {
+    // get all shops sorted by distance
     const nearShops = await store.nearShops({ long, lat });
+    // exclude the ones which the user already disliked
     const dislikedExcluded = await store.filterOutDisliked(userId, nearShops);
+    // exclude the ones already marked as preferred by user (liked)
     return store.filterOutPreferred(userId, dislikedExcluded);
   } catch (e) {
     throw e;
   }
 }
 
-app.get('/shops/nearby', async (req, res) => {
+app.get('/shops/nearby', ensureAuthenticated, async (req, res) => {
   try {
-    // default to Rabat
+    // default to Rabat, in case the user didn't want to share his location
     const coords = { long: -6.849813, lat: 33.971588 };
     const stores = await getNearShops(req.user._id, coords.long, coords.lat);
     res.json(stores);
@@ -78,8 +85,9 @@ app.get('/shops/nearby', async (req, res) => {
   }
 });
 
-app.get('/shops/nearby/:long/:lat', async (req, res) => {
+app.get('/shops/nearby/:long/:lat', ensureAuthenticated, async (req, res) => {
   try {
+    // validating these parameters with regex is mandatory
     const userId = req.user._id;
     const long = +req.params.long;
     const lat = +req.params.lat;
@@ -90,7 +98,7 @@ app.get('/shops/nearby/:long/:lat', async (req, res) => {
   }
 });
 
-app.post('/shop/:shopId/like', async (req, res) => {
+app.post('/shop/:shopId/like', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { shopId } = req.params;
@@ -107,7 +115,7 @@ app.post('/shop/:shopId/like', async (req, res) => {
   }
 });
 
-app.post('/shop/:shopId/dislike', async (req, res) => {
+app.post('/shop/:shopId/dislike', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { shopId } = req.params;
@@ -124,7 +132,7 @@ app.post('/shop/:shopId/dislike', async (req, res) => {
   }
 });
 
-app.post('/shops/preferred/remove/:shopId', async (req, res) => {
+app.post('/shops/preferred/remove/:shopId', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { shopId } = req.params;
@@ -141,7 +149,7 @@ app.post('/shops/preferred/remove/:shopId', async (req, res) => {
   }
 });
 
-app.get('/shops/preferred/', async (req, res) => {
+app.get('/shops/preferred/', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const shops = await store.loadPreferredShops(userId);
