@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import express from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
@@ -52,19 +53,24 @@ app.post('/register', async (req, res) => {
   }
 });
 
+async function getNearShops(userId, long, lat) {
+  const nearShops = await store.nearShops({ long, lat });
+  return store.filterOutDisliked(userId, nearShops);
+}
+
 app.get('/shops/nearby', async (req, res) => {
   // default to Rabat
   const coords = { long: -6.849813, lat: 33.971588 };
-  const stores = await store.nearShops(coords);
+  const stores = await getNearShops(req.user._id, coords.long, coords.lat);
   res.json(stores);
 });
 
 app.get('/shops/nearby/:long/:lat', async (req, res) => {
+  const userId = req.user._id;
   const long = +req.params.long;
   const lat = +req.params.lat;
-  const stores = await store.nearShops({ long, lat });
-
-  res.json(stores);
+  const shops = await getNearShops(userId, long, lat);
+  res.json(shops);
 });
 
 app.use((req, res, next) => {

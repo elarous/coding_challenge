@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-import mongoose from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 let storeTest;
 let storeProd;
@@ -135,10 +136,15 @@ class Store {
   }
 
   static moreThanTwoHours(dislikedShops, shop) {
-    const dislikeInfos = dislikedShops.filter(ds => ds.shop === shop._id.toString())[0];
+    const dislikeInfos = dislikedShops.filter(ds => new ObjectId(ds.shop).equals(shop._id))[0];
     const twoHours = 2 * 60 * 60 * 1000;
 
     return +Date.now() - +dislikeInfos.timestamp >= twoHours;
+  }
+
+  static shopWithinDisliked(idsStr, shopId) {
+    const ids = idsStr.map(id => new ObjectId(id));
+    return ids.some(id => id.equals(shopId));
   }
 
   filterOutDisliked(userId, shops) {
@@ -147,8 +153,8 @@ class Store {
         .exec()
         .then((user) => {
           const filteredShops = shops.filter(
-            shop => !user.dislikedShops.map(sObj => sObj.shop).includes(shop._id)
-              && Store.moreThanTwoHours(user.dislikedShops, shop)
+            shop => !Store.shopWithinDisliked(user.dislikedShops.map(sObj => sObj.shop), shop._id)
+              || Store.moreThanTwoHours(user.dislikedShops, shop)
           );
           resolve(filteredShops);
         })

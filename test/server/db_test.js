@@ -259,7 +259,7 @@ describe('Testing the persistence layer (db Store)', () => {
         .that.have.lengthOf(0);
     });
 
-    it('Should exlude disliked shops only if they were disliked in less than 2 hours', async () => {
+    it('Should exclude disliked shops only if they were disliked in less than 2 hours', async () => {
       // Given
       /* user sami already in db */
       /* moscow shop already in db */
