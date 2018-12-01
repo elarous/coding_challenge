@@ -9,7 +9,8 @@
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon src/server/index.js --exec babel-node --presets @babel/preset-env",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "mocha --compilers js:@babel/register test/*"
+    "testDB": "mocha --compilers js:@babel/register test/server/db_test.js",
+    "testServer": "nodemon --exec mocha --compilers js:@babel/register test/server/test.js"
   },
   "author": "Oussama El Arbaoui",
   "license": "MIT",
@@ -50,6 +51,7 @@
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.3",
     "mocha": "^5.2.0",
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0"
   }
 }

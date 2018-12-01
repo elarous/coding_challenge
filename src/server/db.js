@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 
 class Store {
-  constructor(dbUrl) {
+  constructor(dbUrl = 'mongodb://localhost/ccdb') {
     mongoose.connect(dbUrl);
     this.mdb = mongoose.connection;
 
