@@ -30,23 +30,22 @@ class RegisterForm extends Component {
     this.tryRegister = this.tryRegister.bind(this);
   }
 
-  handleEmailChange(e) {
-    this.setState({ email: e.target.value });
+  handleemailchange(e) {
+    this.setstate({ email: e.target.value });
   }
 
-  handlePasswordChange(e) {
-    this.setState({ password: e.target.value });
+  handlepasswordchange(e) {
+    this.setstate({ password: e.target.value });
   }
 
-  handleRepasswordChane(e) {
-    this.setState({ repassword: e.target.value });
+  handlerepasswordchane(e) {
+    this.setstate({ repassword: e.target.value });
   }
 
   async tryRegister() {
     const { email } = this.state;
     const { password } = this.state;
 
-    console.log(this.state);
     try {
       const res = await fetch('/api/register', {
         method: 'POST',
@@ -101,7 +100,7 @@ class RegisterForm extends Component {
             </Segment>
           </Form>
         )}
-        {showMsg && <FormFeedback isError={msgType == 'error'} content={msgContent} />}
+        {showMsg && <FormFeedback isError={msgType === 'error'} content={msgContent} />}
         <FormMessage text="Already a member?" linkUrl="/login" linkText="Login" />
       </FormContainer>
     );
