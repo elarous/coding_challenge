@@ -69,35 +69,38 @@ class RegisterForm extends Component {
     const {
       email, password, repassword, msgType, msgContent, showMsg
     } = this.state;
+    const showForm = !showMsg || msgType === 'error';
     return (
       <FormContainer>
         <FormHeader text="Create A New Account" />
-        <Form size="large">
-          <Segment stacked>
-            <FormInput
-              icon="user"
-              placeholder="Email address"
-              type="text"
-              onChange={this.handleEmailChange}
-              value={email}
-            />
-            <FormInput
-              icon="lock"
-              placeholder="Password"
-              type="password"
-              onChange={this.handlePasswordChange}
-              value={password}
-            />
-            <FormInput
-              icon="lock"
-              placeholder="Password Again"
-              type="password"
-              onChange={this.handleRepasswordChane}
-              value={repassword}
-            />
-            <FormButton text="Sign Up" onClick={this.tryRegister} />
-          </Segment>
-        </Form>
+        {showForm && (
+          <Form size="large">
+            <Segment stacked>
+              <FormInput
+                icon="user"
+                placeholder="Email address"
+                type="text"
+                onChange={this.handleEmailChange}
+                value={email}
+              />
+              <FormInput
+                icon="lock"
+                placeholder="Password"
+                type="password"
+                onChange={this.handlePasswordChange}
+                value={password}
+              />
+              <FormInput
+                icon="lock"
+                placeholder="Password Again"
+                type="password"
+                onChange={this.handleRepasswordChane}
+                value={repassword}
+              />
+              <FormButton text="Sign Up" onClick={this.tryRegister} />
+            </Segment>
+          </Form>
+        )}
         {showMsg && <FormFeedback isError={msgType == 'error'} content={msgContent} />}
         <FormMessage text="Already a member?" linkUrl="/login" linkText="Login" />
       </FormContainer>
