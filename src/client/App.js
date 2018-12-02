@@ -24,7 +24,7 @@ const FormButton = ({ text }) => (
 );
 
 const FormMessage = ({ text, linkUrl, linkText }) => (
-  <Message textAlign="center">
+  <Message>
     {text}
     {' '}
     <a href={linkUrl}>{linkText}</a>
@@ -46,6 +46,7 @@ const RegisterForm = () => (
       <Segment stacked>
         <FormInput icon="user" placeholder="Email address" type="text" />
         <FormInput icon="lock" placeholder="Password" type="password" />
+        <FormInput icon="lock" placeholder="Password Again" type="password" />
         <FormButton text="Login" />
       </Segment>
     </Form>
