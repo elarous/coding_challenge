@@ -152,7 +152,7 @@ describe('Features That Needs User Authentication', () => {
   describe('Nearby Shops', () => {
     it('Should get nearby shops without providing coords', async () => {
       try {
-        const res = await agent.get('/shops/nearby');
+        const res = await agent.get('/api/shops/nearby');
 
         expect(res).to.have.status(200);
         expect(res.body).is.an('array');
@@ -167,7 +167,7 @@ describe('Features That Needs User Authentication', () => {
     it("Should get nearby shops to a point using it's coordinates", async () => {
       try {
         // Shanghai, China coords
-        const res = await agent.get('/shops/nearby/121.473701/31.230391');
+        const res = await agent.get('/api/shops/nearby/121.473701/31.230391');
 
         expect(res).to.have.status(200);
         // nearest shop is the one in Tokyo
@@ -181,7 +181,7 @@ describe('Features That Needs User Authentication', () => {
       try {
         await store.addToDisliked(currentUser._id, tokyoShop._id);
         // Shanghai again
-        const res = await agent.get('/shops/nearby/121.473701/31.230391');
+        const res = await agent.get('/api/shops/nearby/121.473701/31.230391');
 
         expect(res).to.have.status(200);
         expect(res.body[0].name).to.not.equal('Shop 4 Tokyo');
@@ -194,7 +194,7 @@ describe('Features That Needs User Authentication', () => {
       try {
         await store.addToPreferred(currentUser._id, tokyoShop._id);
         // Shanghai again :)
-        const res = await agent.get('/shops/nearby/121.473701/31.230391');
+        const res = await agent.get('/api/shops/nearby/121.473701/31.230391');
 
         expect(res).to.have.status(200);
         expect(res.body[0].name).to.not.equal('Shop 4 Tokyo');
@@ -246,7 +246,7 @@ describe('Features That Needs User Authentication', () => {
     it("Should list all user's preferred shops", async () => {
       try {
         await store.addToPreferred(currentUser._id, tokyoShop._id);
-        const res = await agent.get('/shops/preferred/');
+        const res = await agent.get('/api/shops/preferred/');
 
         expect(res).to.have.status(200);
         expect(res).to.be.json;
@@ -261,14 +261,36 @@ describe('Features That Needs User Authentication', () => {
   });
 
   describe('Loading Shops Images', () => {
-    it("Should load an image file using it's name and extension", async () => {
+    it('Should load an image file using it\'s name and extension', async () => {
       try {
         // for this test, the image `img1.png` should exists
         // in `files` directory
-        const res = await agent.get('/image/img1.png');
+        const res = await agent.get('/api/image/img1.png');
 
         expect(res).to.have.status(200);
         expect(res).to.have.header('content-type', 'image/png');
+      } catch (e) {
+        throw e;
+      }
+    });
+  });
+
+  // for the SPA to work properly
+  describe('Redirecting routes to index.html', () => {
+    it('Should return the index.html for / route', async () => {
+      const res = await agent.get('/');
+
+      expect(res).to.have.status(200);
+      expect(res).to.be.html;
+    });
+
+    it('Should return index.html routes not starting with /api/ ', async () => {
+      try {
+        const random1 = '/my/random/route';
+        const res = await agent.get(random1);
+
+        expect(res).to.have.status(200);
+        expect(res).to.be.html;
       } catch (e) {
         throw e;
       }

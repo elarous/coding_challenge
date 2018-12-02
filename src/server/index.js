@@ -35,6 +35,11 @@ function ensureAuthenticated(req, res, next) {
   res.json({ error: 'You are not authenticated !' });
 }
 
+// all GET routes not starting with /api/
+app.get(/^((?!\/api\/).)*$/, (req, res) => {
+  res.sendFile(`${process.cwd()}/public/index.html`);
+});
+
 app.post('/login', passport.authenticate('local'), (req, res) => {
   res.json({ loggedIn: true });
 });
@@ -75,7 +80,7 @@ async function getNearShops(userId, long, lat) {
   }
 }
 
-app.get('/shops/nearby', ensureAuthenticated, async (req, res) => {
+app.get('/api/shops/nearby', ensureAuthenticated, async (req, res) => {
   try {
     // default to Rabat, in case the user didn't want to share his location
     const coords = { long: -6.849813, lat: 33.971588 };
@@ -86,7 +91,7 @@ app.get('/shops/nearby', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/shops/nearby/:long/:lat', ensureAuthenticated, async (req, res) => {
+app.get('/api/shops/nearby/:long/:lat', ensureAuthenticated, async (req, res) => {
   try {
     // validating these parameters with regex is mandatory
     const userId = req.user._id;
@@ -150,7 +155,7 @@ app.post('/shops/preferred/remove/:shopId', ensureAuthenticated, async (req, res
   }
 });
 
-app.get('/shops/preferred/', ensureAuthenticated, async (req, res) => {
+app.get('/api/shops/preferred/', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const shops = await store.loadPreferredShops(userId);
@@ -161,7 +166,7 @@ app.get('/shops/preferred/', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/image/:img', async (req, res) => {
+app.get('/api/image/:img', async (req, res) => {
   res.sendFile(`${process.cwd()}/files/${req.params.img}`);
 });
 
