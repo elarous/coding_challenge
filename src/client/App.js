@@ -6,22 +6,11 @@ import {
   Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
 import { RegisterForm } from './register';
+import { LoginForm } from './login';
 import './app.css';
 
 /*
-const LoginForm = () => (
-  <FormContainer>
-    <FormHeader text="Login To Your Account" />
-    <Form size="large">
-      <Segment stacked>
-        <FormInput icon="user" placeholder="Email address" type="text" />
-        <FormInput icon="lock" placeholder="Password" type="password" />
-        <FormButton text="Login" />
-      </Segment>
-    </Form>
-    <FormMessage text="New Here? " linkUrl="/register" linkText="Sign up" />
-  </FormContainer>
-);
+
 */
 
 // cards
@@ -65,13 +54,11 @@ const RegisterPage = () => (
   </div>
 );
 
-/*
 const LoginPage = () => (
   <div id="login-page" className="page">
     <LoginForm />
   </div>
 );
-*/
 
 const NearShops = () => (
   <div>
@@ -98,7 +85,7 @@ const Main = () => (
     <Switch>
       <Route exact path="/" component={NearShops} />
       <Route exact path="/register" component={RegisterPage} />
-      {/* <Route exact path="/login" component={LoginPage} /> */}
+      <Route exact path="/login" component={LoginPage} />
       <Route component={NotFound} />
     </Switch>
   </Router>
