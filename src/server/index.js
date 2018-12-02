@@ -13,6 +13,7 @@ const storeType = process.env.PROD ? 'prod' : 'test';
 const store = getStore(storeType);
 
 app.use(express.static('dist'));
+app.use(express.static('files'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -158,6 +159,10 @@ app.get('/shops/preferred/', ensureAuthenticated, async (req, res) => {
   } catch (e) {
     throw e;
   }
+});
+
+app.get('/image/:img', async (req, res) => {
+  res.sendFile(`${process.cwd()}/files/${req.params.img}`);
 });
 
 app.use((req, res, next) => {

@@ -9,7 +9,6 @@ import getStore from '../../src/server/db';
 
 chai.use(chaiHttp);
 
-
 /* common variables */
 let currentUser;
 let tokyoShop;
@@ -25,7 +24,7 @@ describe('User Authentication', () => {
 
   beforeEach(async () => {
     try {
-      // clean up 
+      // clean up
       await store.db.collection('users').remove({});
       await store.db.collection('shops').remove({});
     } catch (e) {
@@ -143,7 +142,7 @@ describe('Features That Needs User Authentication', () => {
 
       // save all shops
       await Promise.all(shops.map(shop => store.saveShop(...shop)));
-      // then retrieve the tokyo shop 
+      // then retrieve the tokyo shop
       tokyoShop = await store.db.collection('shops').findOne({ name: 'Shop 4 Tokyo' });
     } catch (e) {
       throw e;
@@ -255,6 +254,21 @@ describe('Features That Needs User Authentication', () => {
           .to.be.an('array')
           .that.have.lengthOf(1);
         expect(res.body[0].name).to.equal(tokyoShop.name);
+      } catch (e) {
+        throw e;
+      }
+    });
+  });
+
+  describe('Loading Shops Images', () => {
+    it("Should load an image file using it's name and extension", async () => {
+      try {
+        // for this test, the image `img1.png` should exists
+        // in `files` directory
+        const res = await agent.get('/image/img1.png');
+
+        expect(res).to.have.status(200);
+        expect(res).to.have.header('content-type', 'image/png');
       } catch (e) {
         throw e;
       }
