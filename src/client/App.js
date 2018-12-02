@@ -1,23 +1,81 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router, Switch, Route, Link
+} from 'react-router-dom';
+import {
+  Button, Form, Grid, Header, Message, Segment
+} from 'semantic-ui-react';
 import './app.css';
-import ReactImage from './react.png';
 
-export default class App extends Component {
-  state = { username: null };
+const FormHeader = ({ text }) => (
+  <Header as="h2" color="blue" textAlign="center">
+    {text}
+  </Header>
+);
 
-  componentDidMount() {
-    fetch('/api/getUsername')
-      .then(res => res.json())
-      .then(user => this.setState({ username: user.username }));
-  }
+const FormInput = ({ icon, placeholder, type }) => (
+  <Form.Input fluid icon={icon} iconPosition="left" placeholder={placeholder} type={type} />
+);
 
-  render() {
-    const { username } = this.state;
-    return (
-      <div>
-        {username ? <h1>{`Hello ${username}`}</h1> : <h1>Loading.. please wait!</h1>}
-        <img src={ReactImage} alt="react" />
-      </div>
-    );
-  }
-}
+const FormButton = ({ text }) => (
+  <Button color="blue" fluid size="large">
+    {text}
+  </Button>
+);
+
+const FormMessage = ({ text, linkUrl, linkText }) => (
+  <Message>
+    {text}
+    {' '}
+    <a href={linkUrl}>{linkText}</a>
+  </Message>
+);
+
+const FormContainer = ({ children }) => (
+  <Grid textAlign="center" verticalAlign="middle">
+    <Grid.Column style={{ maxWidth: 450 }}>{children}</Grid.Column>
+  </Grid>
+);
+
+const RegisterForm = () => (
+  <FormContainer>
+    <FormHeader text="Create A New Account" />
+    <Form size="large">
+      <Segment stacked>
+        <FormInput icon="user" placeholder="Email address" type="text" />
+        <FormInput icon="lock" placeholder="Password" type="password" />
+        <FormButton text="Login" />
+      </Segment>
+    </Form>
+    <FormMessage text="Already a member?" linkUrl="/login" linkText="Login" />
+  </FormContainer>
+);
+
+const RegisterPage = () => (
+  <div className="page">
+    <RegisterForm />
+  </div>
+);
+
+const NearShops = () => (
+  <div>
+    <h1>Home page</h1>
+    <Link to="/register">register</Link>
+  </div>
+);
+
+const NotFound = () => <h1> NOT FOUND :(</h1>;
+
+const Main = () => (
+  <Router>
+    <Switch>
+      <Route exact path="/" component={NearShops} />
+      <Route exact path="/register" component={RegisterPage} />
+      <Route component={NotFound} />
+    </Switch>
+  </Router>
+);
+
+const App = () => <Main />;
+
+export default App;
