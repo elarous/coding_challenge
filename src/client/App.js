@@ -27,7 +27,7 @@ const FormMessage = ({ text, linkUrl, linkText }) => (
   <Message>
     {text}
     {' '}
-    <a href={linkUrl}>{linkText}</a>
+    <Link to={linkUrl}>{linkText}</Link>
   </Message>
 );
 
@@ -47,10 +47,24 @@ const RegisterForm = () => (
         <FormInput icon="user" placeholder="Email address" type="text" />
         <FormInput icon="lock" placeholder="Password" type="password" />
         <FormInput icon="lock" placeholder="Password Again" type="password" />
-        <FormButton text="Login" />
+        <FormButton text="Sign Up" />
       </Segment>
     </Form>
     <FormMessage text="Already a member?" linkUrl="/login" linkText="Login" />
+  </FormContainer>
+);
+
+const LoginForm = () => (
+  <FormContainer>
+    <FormHeader text="Login To Your Account" />
+    <Form size="large">
+      <Segment stacked>
+        <FormInput icon="user" placeholder="Email address" type="text" />
+        <FormInput icon="lock" placeholder="Password" type="password" />
+        <FormButton text="Login" />
+      </Segment>
+    </Form>
+    <FormMessage text="New Here? " linkUrl="/register" linkText="Sign up" />
   </FormContainer>
 );
 
@@ -60,10 +74,17 @@ const RegisterPage = () => (
   </div>
 );
 
+const LoginPage = () => (
+  <div className="page">
+    <LoginForm />
+  </div>
+);
+
 const NearShops = () => (
   <div>
     <h1>Home page</h1>
     <Link to="/register">register</Link>
+    <Link to="/login">login</Link>
   </div>
 );
 
@@ -74,6 +95,7 @@ const Main = () => (
     <Switch>
       <Route exact path="/" component={NearShops} />
       <Route exact path="/register" component={RegisterPage} />
+      <Route exact path="/login" component={LoginPage} />
       <Route component={NotFound} />
     </Switch>
   </Router>
