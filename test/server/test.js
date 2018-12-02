@@ -37,7 +37,7 @@ describe('User Authentication', () => {
       try {
         const res = await chai
           .request(server)
-          .post('/login')
+          .post('/api/login')
           .send({ username: 'random@random.com', password: '12345' });
 
         expect(res).to.have.status(401);
@@ -51,7 +51,7 @@ describe('User Authentication', () => {
         await store.saveUser(email, password);
         const res = await chai
           .request(server)
-          .post('/login')
+          .post('/api/login')
           .send({ username: email, password });
 
         expect(res).to.have.status(200);
@@ -64,7 +64,7 @@ describe('User Authentication', () => {
 
     it('Should logout the user', async () => {
       try {
-        const res = await chai.request(server).post('/logout');
+        const res = await chai.request(server).post('/api/logout');
         expect(res).to.have.status(200);
         expect(res).to.be.json;
         expect(res.body).to.deep.equal({ loggedOut: true });
@@ -80,7 +80,7 @@ describe('User Authentication', () => {
         await store.saveUser(email, password);
         const res = await chai
           .request(server)
-          .post('/register')
+          .post('/api/register')
           .send({ email, password });
 
         expect(res).to.have.status(200);
@@ -95,7 +95,7 @@ describe('User Authentication', () => {
       try {
         const res = await chai
           .request(server)
-          .post('/register')
+          .post('/api/register')
           .send({ email, password });
 
         expect(res).to.have.status(200);
@@ -118,7 +118,7 @@ describe('Features That Needs User Authentication', () => {
       // the agent to be used as an http client
       agent = chai.request.agent(server);
       // authenticate
-      await agent.post('/login').send({ username: email, password });
+      await agent.post('/api/login').send({ username: email, password });
     } catch (e) {
       throw e;
     }
@@ -207,7 +207,7 @@ describe('Features That Needs User Authentication', () => {
   describe('Shop Operations', () => {
     it("Should add a shop to the user's preferred list after a like", async () => {
       try {
-        const res = await agent.post(`/shop/${tokyoShop._id}/like`);
+        const res = await agent.post(`/api/shop/${tokyoShop._id}/like`);
 
         expect(res).to.have.status(200);
         expect(res).to.be.json;
@@ -219,7 +219,7 @@ describe('Features That Needs User Authentication', () => {
 
     it("Should add a shop to user's disliked list after a dislike", async () => {
       try {
-        const res = await agent.post(`/shop/${tokyoShop._id}/dislike`);
+        const res = await agent.post(`/api/shop/${tokyoShop._id}/dislike`);
 
         expect(res).to.have.status(200);
         expect(res).to.be.json;
@@ -231,7 +231,7 @@ describe('Features That Needs User Authentication', () => {
 
     it("Should remove a shop from user's preferred list", async () => {
       try {
-        const res = await agent.post(`/shops/preferred/remove/${tokyoShop._id}`);
+        const res = await agent.post(`/api/shops/preferred/remove/${tokyoShop._id}`);
 
         expect(res).to.have.status(200);
         expect(res).to.be.json;

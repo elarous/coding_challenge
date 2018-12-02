@@ -40,16 +40,16 @@ app.get(/^((?!\/api\/).)*$/, (req, res) => {
   res.sendFile(`${process.cwd()}/public/index.html`);
 });
 
-app.post('/login', passport.authenticate('local'), (req, res) => {
+app.post('/api/login', passport.authenticate('local'), (req, res) => {
   res.json({ loggedIn: true });
 });
 
-app.post('/logout', (req, res) => {
+app.post('/api/logout', (req, res) => {
   req.logout();
   res.json({ loggedOut: true });
 });
 
-app.post('/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
   try {
     const { email } = req.body;
     const { password } = req.body;
@@ -104,7 +104,7 @@ app.get('/api/shops/nearby/:long/:lat', ensureAuthenticated, async (req, res) =>
   }
 });
 
-app.post('/shop/:shopId/like', ensureAuthenticated, async (req, res) => {
+app.post('/api/shop/:shopId/like', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { shopId } = req.params;
@@ -121,7 +121,7 @@ app.post('/shop/:shopId/like', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/shop/:shopId/dislike', ensureAuthenticated, async (req, res) => {
+app.post('/api/shop/:shopId/dislike', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { shopId } = req.params;
@@ -138,7 +138,7 @@ app.post('/shop/:shopId/dislike', ensureAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/shops/preferred/remove/:shopId', ensureAuthenticated, async (req, res) => {
+app.post('/api/shops/preferred/remove/:shopId', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const { shopId } = req.params;
