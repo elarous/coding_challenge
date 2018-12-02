@@ -1,26 +1,14 @@
 import React, { Component } from 'react';
 import {
-  BrowserRouter as Router, Switch, Route, Link
+  BrowserRouter as Router, Switch, Route, Link, NavLink, Redirect
 } from 'react-router-dom';
 import {
   Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
 import { RegisterForm } from './register';
 import { LoginForm } from './login';
+import { GeneralCard } from './cards';
 import './app.css';
-
-/*
-
-*/
-
-// cards
-const GeneralCard = ({ header, img, children }) => (
-  <Card>
-    <Card.Content header={header} />
-    <Image src={img} />
-    <Card.Content extra>{children}</Card.Content>
-  </Card>
-);
 
 const LikeDislikeBtns = () => (
   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -60,23 +48,83 @@ const LoginPage = () => (
   </div>
 );
 
-const NearShops = () => (
-  <div>
-    <h1>Home page</h1>
-    <Link to="/register">register</Link>
-    <Link to="/login">login</Link>
-    <br />
-    <NormalShopCard
-      header="Shop 1 card"
-      img="https://react.semantic-ui.com/images/avatar/large/matthew.png"
-    />
-
-    <PreferredShopCard
-      header="Shop 1 card"
-      img="https://react.semantic-ui.com/images/avatar/large/matthew.png"
-    />
-  </div>
+const NavBtns = () => (
+  <nav>
+    <NavLink className="nav-link" to="/">
+      Nearby Shops
+    </NavLink>
+    <NavLink className="nav-link" to="/preferred">
+      Preferred Shops
+    </NavLink>
+  </nav>
 );
+
+class NearShops extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loading: true, shops: [], authenticated: true };
+  }
+
+  async componentDidMount() {
+    const position = new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => resolve(pos), err => reject(err));
+      } else {
+        reject(Error('navigator geolocation not found'));
+      }
+    });
+
+    let pos;
+    try {
+      pos = await position;
+    } catch (err) {
+      console.log(err);
+    }
+
+    const url = pos
+      ? `/api/shops/nearby/${pos.coords.longitude}/${pos.coords.latitude}`
+      : '/api/shops/nearby';
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        mode: 'cors'
+      });
+
+      if (res.status === 401) {
+        this.setState({ authenticated: false, loading: false });
+      } else {
+        const json = await res.json();
+        console.log(json);
+        this.setState({ loading: false, shops: json });
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  render() {
+    const { authenticated, loading, shops } = this.state;
+    return (
+      <div>
+        {!authenticated && <Redirect to="/login" />}
+        <NavBtns />
+        <div className="cards-segment">
+          <Segment loading={loading}>
+            <div className="cards-container">
+              {shops.map(shop => (
+                <NormalShopCard header={shop.name} img={`/api/image/${shop.image}`} />
+              ))}
+            </div>
+          </Segment>
+        </div>
+      </div>
+    );
+  }
+}
 
 const NotFound = () => <h1> NOT FOUND :(</h1>;
 
