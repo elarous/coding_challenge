@@ -26,20 +26,20 @@ class RegisterForm extends Component {
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleRepasswordChane = this.handleRepasswordChane.bind(this);
+    this.handleRepasswordChange = this.handleRepasswordChange.bind(this);
     this.tryRegister = this.tryRegister.bind(this);
   }
 
-  handleemailchange(e) {
-    this.setstate({ email: e.target.value });
+  handleEmailChange(e) {
+    this.setState({ email: e.target.value });
   }
 
-  handlepasswordchange(e) {
-    this.setstate({ password: e.target.value });
+  handlePasswordChange(e) {
+    this.setState({ password: e.target.value });
   }
 
-  handlerepasswordchane(e) {
-    this.setstate({ repassword: e.target.value });
+  handleRepasswordChange(e) {
+    this.setState({ repassword: e.target.value });
   }
 
   async tryRegister() {
@@ -93,7 +93,7 @@ class RegisterForm extends Component {
                 icon="lock"
                 placeholder="Password Again"
                 type="password"
-                onChange={this.handleRepasswordChane}
+                onChange={this.handleRepasswordChange}
                 value={repassword}
               />
               <FormButton text="Sign Up" onClick={this.tryRegister} />
