@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router, Switch, Route, Link
 } from 'react-router-dom';
 import {
-  Button, Form, Grid, Header, Message, Segment
+  Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
 import './app.css';
 
@@ -68,14 +68,49 @@ const LoginForm = () => (
   </FormContainer>
 );
 
+// cards
+const GeneralCard = ({ header, img, children }) => (
+  <Card>
+    <Card.Content header={header} />
+    <Image src={img} />
+    <Card.Content extra>{children}</Card.Content>
+  </Card>
+);
+
+const LikeDislikeBtns = () => (
+  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+    <Button content="Dislike" icon="thumbs down" labelPosition="left" />
+    <Button content="Like" icon="thumbs up" labelPosition="left" />
+  </div>
+);
+
+const RemoveBtn = () => (
+  <div>
+    <Button content="Remove" icon="trash" labelPosition="left" />
+  </div>
+);
+
+const NormalShopCard = ({ header, img }) => (
+  <GeneralCard header={header} img={img}>
+    <LikeDislikeBtns />
+  </GeneralCard>
+);
+
+const PreferredShopCard = ({ header, img }) => (
+  <GeneralCard header={header} img={img}>
+    <RemoveBtn />
+  </GeneralCard>
+);
+
+// pages
 const RegisterPage = () => (
-  <div className="page">
+  <div id="register-page" className="page">
     <RegisterForm />
   </div>
 );
 
 const LoginPage = () => (
-  <div className="page">
+  <div id="login-page" className="page">
     <LoginForm />
   </div>
 );
@@ -85,6 +120,16 @@ const NearShops = () => (
     <h1>Home page</h1>
     <Link to="/register">register</Link>
     <Link to="/login">login</Link>
+    <br />
+    <NormalShopCard
+      header="Shop 1 card"
+      img="https://react.semantic-ui.com/images/avatar/large/matthew.png"
+    />
+
+    <PreferredShopCard
+      header="Shop 1 card"
+      img="https://react.semantic-ui.com/images/avatar/large/matthew.png"
+    />
   </div>
 );
 
