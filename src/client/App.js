@@ -24,7 +24,7 @@ const FormButton = ({ text }) => (
 );
 
 const FormMessage = ({ text, linkUrl, linkText }) => (
-  <Message>
+  <Message textAlign="center">
     {text}
     {' '}
     <a href={linkUrl}>{linkText}</a>
@@ -32,9 +32,11 @@ const FormMessage = ({ text, linkUrl, linkText }) => (
 );
 
 const FormContainer = ({ children }) => (
-  <Grid textAlign="center" verticalAlign="middle">
-    <Grid.Column style={{ maxWidth: 450 }}>{children}</Grid.Column>
-  </Grid>
+  <div className="form-container">
+    <Grid verticalAlign="middle">
+      <Grid.Column>{children}</Grid.Column>
+    </Grid>
+  </div>
 );
 
 const RegisterForm = () => (
