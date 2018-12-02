@@ -5,55 +5,10 @@ import {
 import {
   Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
+import { RegisterForm } from './register';
 import './app.css';
 
-const FormHeader = ({ text }) => (
-  <Header as="h2" color="blue" textAlign="center">
-    {text}
-  </Header>
-);
-
-const FormInput = ({ icon, placeholder, type }) => (
-  <Form.Input fluid icon={icon} iconPosition="left" placeholder={placeholder} type={type} />
-);
-
-const FormButton = ({ text }) => (
-  <Button color="blue" fluid size="large">
-    {text}
-  </Button>
-);
-
-const FormMessage = ({ text, linkUrl, linkText }) => (
-  <Message>
-    {text}
-    {' '}
-    <Link to={linkUrl}>{linkText}</Link>
-  </Message>
-);
-
-const FormContainer = ({ children }) => (
-  <div className="form-container">
-    <Grid verticalAlign="middle">
-      <Grid.Column>{children}</Grid.Column>
-    </Grid>
-  </div>
-);
-
-const RegisterForm = () => (
-  <FormContainer>
-    <FormHeader text="Create A New Account" />
-    <Form size="large">
-      <Segment stacked>
-        <FormInput icon="user" placeholder="Email address" type="text" />
-        <FormInput icon="lock" placeholder="Password" type="password" />
-        <FormInput icon="lock" placeholder="Password Again" type="password" />
-        <FormButton text="Sign Up" />
-      </Segment>
-    </Form>
-    <FormMessage text="Already a member?" linkUrl="/login" linkText="Login" />
-  </FormContainer>
-);
-
+/*
 const LoginForm = () => (
   <FormContainer>
     <FormHeader text="Login To Your Account" />
@@ -67,6 +22,7 @@ const LoginForm = () => (
     <FormMessage text="New Here? " linkUrl="/register" linkText="Sign up" />
   </FormContainer>
 );
+*/
 
 // cards
 const GeneralCard = ({ header, img, children }) => (
@@ -109,11 +65,13 @@ const RegisterPage = () => (
   </div>
 );
 
+/*
 const LoginPage = () => (
   <div id="login-page" className="page">
     <LoginForm />
   </div>
 );
+*/
 
 const NearShops = () => (
   <div>
@@ -140,7 +98,7 @@ const Main = () => (
     <Switch>
       <Route exact path="/" component={NearShops} />
       <Route exact path="/register" component={RegisterPage} />
-      <Route exact path="/login" component={LoginPage} />
+      {/* <Route exact path="/login" component={LoginPage} /> */}
       <Route component={NotFound} />
     </Switch>
   </Router>
