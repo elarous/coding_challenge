@@ -17,7 +17,7 @@ class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'here',
+      email: '',
       password: '',
       showMsg: false,
       msgType: '',

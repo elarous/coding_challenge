@@ -61,6 +61,11 @@ nav {
   margin: 0px 20px;
   padding: 0px 40px;
 }
+
+.cards-segment .ui.segment {
+  min-height: 350px !important;
+}
+
 .cards-container {
   display: flex;
   justify-content: space-around;

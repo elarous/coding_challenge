@@ -25,7 +25,7 @@ const PreferredShopCard = ({
 class PreferredShops extends Component {
   constructor(props) {
     super(props);
-    this.state = { authenticated: true, loading: false, shops: [] };
+    this.state = { authenticated: true, loading: true, shops: [] };
 
     this.handleRemove = this.handleRemove.bind(this);
   }
