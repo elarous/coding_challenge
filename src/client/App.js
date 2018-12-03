@@ -8,6 +8,7 @@ import {
 import { RegisterForm } from './register';
 import { LoginForm } from './login';
 import { GeneralCard } from './cards';
+import { PreferredShops } from './preferred';
 import './app.css';
 
 const LikeDislikeBtns = ({ shopId, onLike, onDislike }) => (
@@ -22,37 +23,12 @@ const LikeDislikeBtns = ({ shopId, onLike, onDislike }) => (
   </div>
 );
 
-const RemoveBtn = () => (
-  <div>
-    <Button content="Remove" icon="trash" labelPosition="left" />
-  </div>
-);
-
 const NormalShopCard = ({
   shopId, header, img, onLike, onDislike
 }) => (
   <GeneralCard header={header} img={img}>
     <LikeDislikeBtns shopId={shopId} onLike={onLike} onDislike={onDislike} />
   </GeneralCard>
-);
-
-const PreferredShopCard = ({ header, img }) => (
-  <GeneralCard header={header} img={img}>
-    <RemoveBtn />
-  </GeneralCard>
-);
-
-// pages
-const RegisterPage = () => (
-  <div id="register-page" className="page">
-    <RegisterForm />
-  </div>
-);
-
-const LoginPage = () => (
-  <div id="login-page" className="page">
-    <LoginForm />
-  </div>
 );
 
 const NavBtns = () => (
@@ -178,12 +154,26 @@ class NearShops extends Component {
 
 const NotFound = () => <h1> NOT FOUND :(</h1>;
 
+// pages
+const RegisterPage = () => (
+  <div id="register-page" className="page">
+    <RegisterForm />
+  </div>
+);
+
+const LoginPage = () => (
+  <div id="login-page" className="page">
+    <LoginForm />
+  </div>
+);
+
 const Main = () => (
   <Router>
     <Switch>
       <Route exact path="/" component={NearShops} />
       <Route exact path="/register" component={RegisterPage} />
       <Route exact path="/login" component={LoginPage} />
+      <Route exact path="/preferred" component={PreferredShops} />
       <Route component={NotFound} />
     </Switch>
   </Router>
