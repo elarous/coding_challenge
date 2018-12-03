@@ -68,9 +68,11 @@ const CardsSegment = ({ loading, children }) => {
 const GeneralCard = ({
   header, img, children, loading
 }) => (
-  <Card loading={loading}>
-    <Card.Content header={header} />
+  <Card loading={loading} color="blue">
     <Image src={img} />
+    <Card.Content>
+      <Header color="blue">{header}</Header>
+    </Card.Content>
     <Card.Content extra>{children}</Card.Content>
   </Card>
 );
