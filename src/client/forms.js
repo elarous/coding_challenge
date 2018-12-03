@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  Button, Form, Grid, Header, Message, Segment, Card, Image
+  Button, Form, Grid, Header, Message
 } from 'semantic-ui-react';
-import {
-  BrowserRouter as Router, Switch, Route, Link
-} from 'react-router-dom';
+import { BrowserRouter as Link } from 'react-router-dom';
 
 const FormHeader = ({ text }) => (
   <Header as="h2" color="blue" textAlign="center">
@@ -18,7 +16,6 @@ const FormInput = ({
   <Form.Input
     fluid
     value={value}
-    onChange
     icon={icon}
     iconPosition="left"
     placeholder={placeholder}
@@ -33,6 +30,8 @@ const FormButton = ({ text, onClick }) => (
   </Button>
 );
 
+// this is the message shown below a Form (ex: to invite a user to login instead)
+// FormFeedBack is the component for error and sucess messages
 const FormMessage = ({ text, linkUrl, linkText }) => (
   <Message>
     {text}

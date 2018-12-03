@@ -1,3 +1,4 @@
+/* so that a page can take the full height and width */
 body {
   position: relative;
 }
@@ -10,6 +11,7 @@ body {
   width: 100%;
 }
 
+/* specific to register and login pages, because of the form in the middle */
 #register-page,
 #login-page {
   display: flex;
@@ -22,26 +24,23 @@ body {
   text-align: center;
 }
 
+/* the top nav */
 nav {
   padding: 15px;
   display: flex;
   justify-content: flex-end;
 }
 
-.nav-link,
-.logout-btn {
+.nav-link {
   font-size: 1.4rem;
   padding: 5px;
   color: #3f51b5;
   display: block;
   margin-left: 10px;
-  background-color: white;
-  cursor: pointer;
-  box-sizing: border-box;
+  cursor: pointer; /* for the logout link (because it doesn't have a href) */
 }
 
 .nav-link:hover,
-.logout-btn:hover,
 .nav-link.active:hover {
   color: #304ffe;
   border-bottom: 2px solid #304ffe;
@@ -52,11 +51,7 @@ nav {
   border-bottom: 2px solid #5c6bc0;
 }
 
-.logout-btn {
-  border: none;
-  outline: none;
-}
-
+/* the segment containing cards */
 .cards-segment {
   margin: 0px 20px;
   padding: 0px 40px;
@@ -69,6 +64,7 @@ nav {
   flex-wrap: wrap;
 }
 
+/* the placeholder text shown when a list of cards is empty */
 .no-cards {
   font-size: 3rem;
   color: #bdbdbd;

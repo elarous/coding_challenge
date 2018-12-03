@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router, Switch, Route, Link, NavLink, Redirect
-} from 'react-router-dom';
-import {
-  Button, Form, Grid, Header, Message, Segment, Card, Image
-} from 'semantic-ui-react';
+import { BrowserRouter as Redirect } from 'react-router-dom';
+import { Button } from 'semantic-ui-react';
 
 import { GeneralCard, NavLinks, CardsSegment } from './common';
 
@@ -22,6 +18,7 @@ const PreferredShopCard = ({
   </GeneralCard>
 );
 
+// the main component for preferred shops page, it fetches data from the server
 class PreferredShops extends Component {
   constructor(props) {
     super(props);
@@ -36,8 +33,7 @@ class PreferredShops extends Component {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
-        },
-        mode: 'cors'
+        }
       });
 
       if (res.status === 401) {

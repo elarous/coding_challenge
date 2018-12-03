@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Button, Form, Grid, Header, Message, Segment, Card, Image
-} from 'semantic-ui-react';
+import { Form, Segment } from 'semantic-ui-react';
 import { Redirect } from 'react-router';
 
 import {
@@ -37,6 +35,8 @@ class LoginForm extends Component {
     this.setState({ password: e.target.value });
   }
 
+  // try login and update the state accordingly,
+  // either by showing an error message or redirecting
   async tryLogin() {
     const { email } = this.state;
     const { password } = this.state;

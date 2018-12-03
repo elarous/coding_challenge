@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import {
-  BrowserRouter as Router, Switch, Route, Link, NavLink, Redirect
+  BrowserRouter as Router, Switch, Route, Redirect
 } from 'react-router-dom';
-import {
-  Button, Form, Grid, Header, Message, Segment, Card, Image
-} from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import { RegisterForm } from './register';
 import { LoginForm } from './login';
 import { GeneralCard, CardsSegment, NavLinks } from './common';
@@ -22,6 +20,7 @@ const LikeDislikeBtns = ({ shopId, onLike, onDislike }) => (
   </div>
 );
 
+// a card for nearby shops
 const NormalShopCard = ({
   shopId, header, img, onLike, onDislike
 }) => (
@@ -30,6 +29,7 @@ const NormalShopCard = ({
   </GeneralCard>
 );
 
+// the main component of nearby shops page
 class NearShops extends Component {
   constructor(props) {
     super(props);
@@ -52,6 +52,8 @@ class NearShops extends Component {
     try {
       pos = await position;
     } catch (err) {
+      // if we couldn't get the user's location, we will call the alternative endpoint
+      // no harm done
       console.log(err);
     }
 
@@ -60,14 +62,15 @@ class NearShops extends Component {
       : '/api/shops/nearby';
 
     try {
+      // fetching shops
       const res = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
-        },
-        mode: 'cors'
+        }
       });
 
+      // in case the user is not authenticated
       if (res.status === 401) {
         this.setState({ authenticated: false, loading: false });
       } else {
@@ -83,14 +86,18 @@ class NearShops extends Component {
   async handleLike(shopId) {
     console.log(`like ${shopId}`);
     try {
+      // send the like request to the server
       const res = await fetch(`/api/shop/${shopId}/like`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         }
       });
+      // wait for the response
       const { liked } = await res.json();
       if (liked) {
+        // the operation has succeeded
+        // remove the target shop from the list of shops
         this.setState({ shops: this.state.shops.filter(shop => shop._id !== shopId) });
       }
     } catch (e) {
@@ -99,6 +106,7 @@ class NearShops extends Component {
   }
 
   async handleDislike(shopId) {
+    // same as handleLike
     console.log(`dislike ${shopId}`);
     try {
       const res = await fetch(`/api/shop/${shopId}/dislike`, {
@@ -118,6 +126,7 @@ class NearShops extends Component {
     const { authenticated, loading, shops } = this.state;
     return (
       <div>
+        {/* in case an a request returned an authorization error */}
         {!authenticated && <Redirect to="/login" />}
         <NavLinks />
         <CardsSegment loading={loading}>
@@ -137,6 +146,8 @@ class NearShops extends Component {
   }
 }
 
+// when typing a url that doesn't exist
+// it needs some styling
 const NotFound = () => <h1> NOT FOUND :(</h1>;
 
 // pages
@@ -152,7 +163,7 @@ const LoginPage = () => (
   </div>
 );
 
-const Main = () => (
+const App = () => (
   <Router>
     <Switch>
       <Route exact path="/" component={NearShops} />
@@ -164,7 +175,5 @@ const Main = () => (
   </Router>
 );
 
-const App = () => <Main />;
-
 export default App;
-export { NearShops };
+export { NearShops }; // export for testing

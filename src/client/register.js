@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Button, Form, Grid, Header, Message, Segment, Card, Image
-} from 'semantic-ui-react';
+import { Form, Segment } from 'semantic-ui-react';
 
 import {
   FormButton,
@@ -12,11 +10,12 @@ import {
   FormFeedback
 } from './forms';
 
+// register a user using the given email
 class RegisterForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'here',
+      email: '',
       password: '',
       repassword: '',
       showMsg: false,
@@ -52,8 +51,7 @@ class RegisterForm extends Component {
         headers: {
           'Content-Type': 'application/json; charset=utf-8'
         },
-        body: JSON.stringify({ email, password }),
-        mode: 'cors'
+        body: JSON.stringify({ email, password })
       });
       const json = await res.json();
       const msgType = json.success ? 'success' : 'error';

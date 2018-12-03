@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { NavLink, Redirect } from 'react-router-dom';
 import {
-  BrowserRouter as Router, Switch, Route, Link, NavLink, Redirect
-} from 'react-router-dom';
-import {
-  Button, Form, Grid, Header, Message, Segment, Card, Image
+  Header, Segment, Card, Image
 } from 'semantic-ui-react';
 
+// a simple component that contains one link
+// clicking on that link should logout the user
+// and redirect him to the /login page
 class Logout extends Component {
   constructor(props) {
     super(props);
@@ -40,15 +41,17 @@ class Logout extends Component {
 }
 
 const NavLinks = () => (
-  <nav>
-    <NavLink className="nav-link" to="/">
-      Nearby Shops
-    </NavLink>
-    <NavLink className="nav-link" to="/preferred">
-      Preferred Shops
-    </NavLink>
-    <Logout />
-  </nav>
+  <div>
+    <nav>
+      <NavLink className="nav-link" to="/">
+        Nearby Shops
+      </NavLink>
+      <NavLink className="nav-link" to="/preferred">
+        Preferred Shops
+      </NavLink>
+      <Logout />
+    </nav>
+  </div>
 );
 
 const CardsSegment = ({ loading, children }) => {
@@ -65,6 +68,7 @@ const CardsSegment = ({ loading, children }) => {
   );
 };
 
+// this component is used by both NormalShopCard and PreferredShopCard
 const GeneralCard = ({
   header, img, children, loading
 }) => (
