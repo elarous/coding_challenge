@@ -43,10 +43,10 @@ class Logout extends Component {
 const NavLinks = () => (
   <div>
     <nav>
-      <NavLink className="nav-link" to="/">
+      <NavLink className="nav-link" exact to="/">
         Nearby Shops
       </NavLink>
-      <NavLink className="nav-link" to="/preferred">
+      <NavLink className="nav-link" exact to="/preferred">
         Preferred Shops
       </NavLink>
       <Logout />
