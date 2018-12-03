@@ -9,7 +9,6 @@ import { RegisterForm } from './register';
 import { LoginForm } from './login';
 import { GeneralCard, CardsSegment, NavLinks } from './common';
 import { PreferredShops } from './preferred';
-import './app.css';
 
 const LikeDislikeBtns = ({ shopId, onLike, onDislike }) => (
   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -168,3 +167,4 @@ const Main = () => (
 const App = () => <Main />;
 
 export default App;
+export { NearShops };

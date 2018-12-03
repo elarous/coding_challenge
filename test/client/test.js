@@ -8,14 +8,18 @@ import Adapter from 'enzyme-adapter-react-16';
 
 import { LoginForm } from '../../src/client/login';
 import { RegisterForm } from '../../src/client/register';
+import { NearShops } from '../../src/client/App';
 
 import { FormInput, FormButton } from '../../src/client/forms';
+import { NavLinks } from '../../src/client/common';
 
 Enzyme.configure({ adapter: new Adapter() });
 
+let wrapper;
+
 describe('Testing <LoginForm />', () => {
   it('Should render 2 <FormInput /> components', () => {
-    const wrapper = shallow(<LoginForm />);
+    wrapper = shallow(<LoginForm />);
     expect(wrapper.find(FormInput)).to.have.lengthOf(2);
     expect(wrapper.find(FormButton)).to.have.lengthOf(1);
   });
@@ -23,8 +27,18 @@ describe('Testing <LoginForm />', () => {
 
 describe('Testing <RegisterForm />', () => {
   it('Should render 3 <FormInput /> components', () => {
-    const wrapper = shallow(<RegisterForm />);
+    wrapper = shallow(<RegisterForm />);
     expect(wrapper.find(FormInput)).to.have.lengthOf(3);
     expect(wrapper.find(FormButton)).to.have.lengthOf(1);
+  });
+});
+
+describe('Testing <NearShops />', () => {
+  before(() => {
+    wrapper = shallow(<NearShops />);
+  });
+
+  it('Should render <NavLinks /> ', () => {
+    expect(wrapper.find(NavLinks)).to.have.lengthOf(1);
   });
 });
