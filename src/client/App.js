@@ -7,7 +7,7 @@ import {
 } from 'semantic-ui-react';
 import { RegisterForm } from './register';
 import { LoginForm } from './login';
-import { GeneralCard } from './cards';
+import { GeneralCard, CardsSegment, NavLinks } from './common';
 import { PreferredShops } from './preferred';
 import './app.css';
 
@@ -29,17 +29,6 @@ const NormalShopCard = ({
   <GeneralCard header={header} img={img}>
     <LikeDislikeBtns shopId={shopId} onLike={onLike} onDislike={onDislike} />
   </GeneralCard>
-);
-
-const NavBtns = () => (
-  <nav>
-    <NavLink className="nav-link" to="/">
-      Nearby Shops
-    </NavLink>
-    <NavLink className="nav-link" to="/preferred">
-      Preferred Shops
-    </NavLink>
-  </nav>
 );
 
 class NearShops extends Component {
@@ -131,22 +120,19 @@ class NearShops extends Component {
     return (
       <div>
         {!authenticated && <Redirect to="/login" />}
-        <NavBtns />
-        <div className="cards-segment">
-          <Segment loading={loading}>
-            <div className="cards-container">
-              {shops.map(shop => (
-                <NormalShopCard
-                  shopId={shop._id}
-                  header={shop.name}
-                  img={`/api/image/${shop.image}`}
-                  onLike={this.handleLike}
-                  onDislike={this.handleDislike}
-                />
-              ))}
-            </div>
-          </Segment>
-        </div>
+        <NavLinks />
+        <CardsSegment loading={loading}>
+          {shops.map(shop => (
+            <NormalShopCard
+              key={shop._id}
+              shopId={shop._id}
+              header={shop.name}
+              img={`/api/image/${shop.image}`}
+              onLike={this.handleLike}
+              onDislike={this.handleDislike}
+            />
+          ))}
+        </CardsSegment>
       </div>
     );
   }

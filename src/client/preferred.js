@@ -5,29 +5,75 @@ import {
 import {
   Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
-import { RegisterForm } from './register';
-import { LoginForm } from './login';
-import { GeneralCard } from './cards';
 
-const RemoveBtn = () => (
+import { GeneralCard, NavLinks, CardsSegment } from './common';
+
+const RemoveBtn = ({ onRemove }) => (
   <div>
-    <Button content="Remove" icon="trash" labelPosition="left" />
+    <Button onClick={onRemove} content="Remove" icon="trash" labelPosition="left" />
   </div>
 );
 
-const PreferredShopCard = ({ header, img }) => (
+const PreferredShopCard = ({
+  header, img, shopId, onRemove
+}) => (
   <GeneralCard header={header} img={img}>
-    <RemoveBtn />
+    <RemoveBtn onRemove={() => onRemove(shopId)} />
   </GeneralCard>
 );
 
 class PreferredShops extends Component {
   constructor(props) {
     super(props);
+    this.state = { authenticated: true, loading: false, shops: [] };
+  }
+
+  handleRemove(shopId) {
+    console.log('remove', shopId);
+  }
+
+  async componentDidMount() {
+    try {
+      const res = await fetch('/api/shops/preferred', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        },
+        mode: 'cors'
+      });
+
+      if (res.status === 401) {
+        this.setState({ authenticated: false, loading: false });
+      } else {
+        const json = await res.json();
+        console.log(json);
+        this.setState({ loading: false, shops: json });
+      }
+    } catch (e) {
+      throw e;
+    }
   }
 
   render() {
-    return <h1>Preferred shops</h1>;
+    const { authenticated, loading, shops } = this.state;
+
+    return (
+      <div>
+        {!authenticated && <Redirect to="/login" />}
+        <NavLinks />
+        <CardsSegment loading={loading}>
+          {shops.map(shop => (
+            <PreferredShopCard
+              key={shop._id}
+              shopId={shop._id}
+              header={shop.name}
+              img={`/api/image/${shop.image}`}
+              onRemove={this.handleRemove}
+            />
+          ))}
+        </CardsSegment>
+      </div>
+    );
   }
 }
 
