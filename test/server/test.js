@@ -149,6 +149,14 @@ describe('Features That Needs User Authentication', () => {
     }
   });
 
+  afterEach(async () => {
+    try {
+      await store.db.collection('shops').remove({});
+    } catch (e) {
+      throw e;
+    }
+  });
+
   describe('Nearby Shops', () => {
     it('Should get nearby shops without providing coords', async () => {
       try {
@@ -261,14 +269,14 @@ describe('Features That Needs User Authentication', () => {
   });
 
   describe('Loading Shops Images', () => {
-    it('Should load an image file using it\'s name and extension', async () => {
+    it("Should load an image file using it's name and extension", async () => {
       try {
         // for this test, the image `img1.png` should exists
         // in `files` directory
-        const res = await agent.get('/api/image/img1.png');
+        const res = await agent.get('/api/image/img1.jpg');
 
         expect(res).to.have.status(200);
-        expect(res).to.have.header('content-type', 'image/png');
+        expect(res).to.have.header('content-type', 'image/jpeg');
       } catch (e) {
         throw e;
       }
