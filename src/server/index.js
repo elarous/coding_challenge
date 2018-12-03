@@ -156,7 +156,7 @@ app.post('/api/shops/preferred/remove/:shopId', ensureAuthenticated, async (req,
   }
 });
 
-app.get('/api/shops/preferred/', ensureAuthenticated, async (req, res) => {
+app.get('/api/shops/preferred', ensureAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id;
     const shops = await store.loadPreferredShops(userId);
