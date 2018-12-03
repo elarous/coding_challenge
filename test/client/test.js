@@ -11,7 +11,7 @@ import { RegisterForm } from '../../src/client/register';
 import { NearShops } from '../../src/client/App';
 
 import { FormInput, FormButton } from '../../src/client/forms';
-import { NavLinks } from '../../src/client/common';
+import { NavLinks, CardsSegment } from '../../src/client/common';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -40,5 +40,9 @@ describe('Testing <NearShops />', () => {
 
   it('Should render <NavLinks /> ', () => {
     expect(wrapper.find(NavLinks)).to.have.lengthOf(1);
+  });
+
+  it('Should render <CardsSegment />', () => {
+    expect(wrapper.find(CardsSegment)).to.have.lengthOf(1);
   });
 });
