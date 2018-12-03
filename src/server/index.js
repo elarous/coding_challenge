@@ -53,7 +53,6 @@ app.post('/api/register', async (req, res) => {
   try {
     const { email } = req.body;
     const { password } = req.body;
-    console.log(`Register user : ${email} , ${password}`);
     const user = await store.loadUser(email);
     if (user) {
       res.json({ error: 'Email Already Exists' });
