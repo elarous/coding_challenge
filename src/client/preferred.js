@@ -26,10 +26,8 @@ class PreferredShops extends Component {
   constructor(props) {
     super(props);
     this.state = { authenticated: true, loading: false, shops: [] };
-  }
 
-  handleRemove(shopId) {
-    console.log('remove', shopId);
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   async componentDidMount() {
@@ -48,6 +46,22 @@ class PreferredShops extends Component {
         const json = await res.json();
         console.log(json);
         this.setState({ loading: false, shops: json });
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async handleRemove(shopId) {
+    console.log('remove', shopId);
+    try {
+      const res = await fetch(`/api/shops/preferred/remove/${shopId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      });
+      const { removed } = await res.json();
+      if (removed) {
+        this.setState({ shops: this.state.shops.filter(shop => shop._id !== shopId) });
       }
     } catch (e) {
       throw e;
