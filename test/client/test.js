@@ -9,6 +9,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import { LoginForm } from '../../src/client/login';
 import { RegisterForm } from '../../src/client/register';
 import { NearShops } from '../../src/client/App';
+import { PreferredShops } from '../../src/client/preferred';
 
 import { FormInput, FormButton } from '../../src/client/forms';
 import { NavLinks, CardsSegment } from '../../src/client/common';
@@ -36,6 +37,20 @@ describe('Testing <RegisterForm />', () => {
 describe('Testing <NearShops />', () => {
   before(() => {
     wrapper = shallow(<NearShops />);
+  });
+
+  it('Should render <NavLinks /> ', () => {
+    expect(wrapper.find(NavLinks)).to.have.lengthOf(1);
+  });
+
+  it('Should render <CardsSegment />', () => {
+    expect(wrapper.find(CardsSegment)).to.have.lengthOf(1);
+  });
+});
+
+describe('Testing <PreferredShops />', () => {
+  before(() => {
+    wrapper = shallow(<PreferredShops />);
   });
 
   it('Should render <NavLinks /> ', () => {
