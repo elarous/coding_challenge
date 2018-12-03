@@ -14,9 +14,17 @@ import { FormInput, FormButton } from '../../src/client/forms';
 Enzyme.configure({ adapter: new Adapter() });
 
 describe('Testing <LoginForm />', () => {
-  it('Should renderer 2 <FormInput /> components', () => {
+  it('Should render 2 <FormInput /> components', () => {
     const wrapper = shallow(<LoginForm />);
     expect(wrapper.find(FormInput)).to.have.lengthOf(2);
+    expect(wrapper.find(FormButton)).to.have.lengthOf(1);
+  });
+});
+
+describe('Testing <RegisterForm />', () => {
+  it('Should render 3 <FormInput /> components', () => {
+    const wrapper = shallow(<RegisterForm />);
+    expect(wrapper.find(FormInput)).to.have.lengthOf(3);
     expect(wrapper.find(FormButton)).to.have.lengthOf(1);
   });
 });
