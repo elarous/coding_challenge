@@ -62,13 +62,18 @@ nav {
   padding: 0px 40px;
 }
 
-.cards-segment .ui.segment {
-  min-height: 350px !important;
-}
-
 .cards-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.no-cards {
+  font-size: 3rem;
+  color: #bdbdbd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
 }

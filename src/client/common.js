@@ -51,13 +51,19 @@ const NavLinks = () => (
   </nav>
 );
 
-const CardsSegment = ({ loading, children }) => (
-  <div className="cards-segment">
-    <Segment loading={loading}>
-      <div className="cards-container">{children}</div>
-    </Segment>
-  </div>
-);
+const CardsSegment = ({ loading, children }) => {
+  const elements = children.length !== 0 ? (
+    <div className="cards-container">{children}</div>
+  ) : (
+    <div className="no-cards">This List Is Empty </div>
+  );
+
+  return (
+    <div className="cards-segment">
+      <Segment loading={loading}>{elements}</Segment>
+    </div>
+  );
+};
 
 const GeneralCard = ({
   header, img, children, loading
