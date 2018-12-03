@@ -3,8 +3,8 @@ import {
   Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
 
-const GeneralCard = ({ header, img, children }) => (
-  <Card>
+const GeneralCard = ({ header, img, children, loading }) => (
+  <Card loading={loading}>
     <Card.Content header={header} />
     <Image src={img} />
     <Card.Content extra>{children}</Card.Content>

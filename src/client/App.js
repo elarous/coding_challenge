@@ -10,10 +10,15 @@ import { LoginForm } from './login';
 import { GeneralCard } from './cards';
 import './app.css';
 
-const LikeDislikeBtns = () => (
+const LikeDislikeBtns = ({ shopId, onLike, onDislike }) => (
   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-    <Button content="Dislike" icon="thumbs down" labelPosition="left" />
-    <Button content="Like" icon="thumbs up" labelPosition="left" />
+    <Button
+      onClick={() => onDislike(shopId)}
+      content="Dislike"
+      icon="thumbs down"
+      labelPosition="left"
+    />
+    <Button onClick={() => onLike(shopId)} content="Like" icon="thumbs up" labelPosition="left" />
   </div>
 );
 
@@ -23,9 +28,11 @@ const RemoveBtn = () => (
   </div>
 );
 
-const NormalShopCard = ({ header, img }) => (
+const NormalShopCard = ({
+  shopId, header, img, onLike, onDislike
+}) => (
   <GeneralCard header={header} img={img}>
-    <LikeDislikeBtns />
+    <LikeDislikeBtns shopId={shopId} onLike={onLike} onDislike={onDislike} />
   </GeneralCard>
 );
 
@@ -63,6 +70,9 @@ class NearShops extends Component {
   constructor(props) {
     super(props);
     this.state = { loading: true, shops: [], authenticated: true };
+
+    this.handleLike = this.handleLike.bind(this);
+    this.handleDislike = this.handleDislike.bind(this);
   }
 
   async componentDidMount() {
@@ -106,6 +116,40 @@ class NearShops extends Component {
     }
   }
 
+  async handleLike(shopId) {
+    console.log(`like ${shopId}`);
+    try {
+      const res = await fetch(`/api/shop/${shopId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8'
+        }
+      });
+      const { liked } = await res.json();
+      if (liked) {
+        this.setState({ shops: this.state.shops.filter(shop => shop._id !== shopId) });
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async handleDislike(shopId) {
+    console.log(`dislike ${shopId}`);
+    try {
+      const res = await fetch(`/api/shop/${shopId}/dislike`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+      });
+      const { disliked } = await res.json();
+      if (disliked) {
+        this.setState({ shops: this.state.shops.filter(shop => shop._id !== shopId) });
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
   render() {
     const { authenticated, loading, shops } = this.state;
     return (
@@ -116,7 +160,13 @@ class NearShops extends Component {
           <Segment loading={loading}>
             <div className="cards-container">
               {shops.map(shop => (
-                <NormalShopCard header={shop.name} img={`/api/image/${shop.image}`} />
+                <NormalShopCard
+                  shopId={shop._id}
+                  header={shop.name}
+                  img={`/api/image/${shop.image}`}
+                  onLike={this.handleLike}
+                  onDislike={this.handleDislike}
+                />
               ))}
             </div>
           </Segment>
