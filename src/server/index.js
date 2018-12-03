@@ -173,6 +173,9 @@ app.get('/api/image/:img', async (req, res) => {
 
 app.post('/api/populate/shops', async (req, res) => {
   try {
+    // clear collection
+    await store.db.collection('shops').remove({});
+
     const shops = [
       ['Shop 1 Casablanca', 'img1.jpg', { long: -7.589843, lat: 33.573109 }],
       ['Shop 2 Paris', 'img2.jpg', { long: 2.352222, lat: 48.856613 }],
