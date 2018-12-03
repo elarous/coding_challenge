@@ -28,15 +28,20 @@ nav {
   justify-content: flex-end;
 }
 
-.nav-link {
+.nav-link,
+.logout-btn {
   font-size: 1.4rem;
   padding: 5px;
   color: #3f51b5;
   display: block;
   margin-left: 10px;
+  background-color: white;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .nav-link:hover,
+.logout-btn:hover,
 .nav-link.active:hover {
   color: #304ffe;
   border-bottom: 2px solid #304ffe;
@@ -45,6 +50,11 @@ nav {
 .nav-link.active {
   color: #5c6bc0;
   border-bottom: 2px solid #5c6bc0;
+}
+
+.logout-btn {
+  border: none;
+  outline: none;
 }
 
 .cards-segment {

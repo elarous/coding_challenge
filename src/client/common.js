@@ -6,6 +6,39 @@ import {
   Button, Form, Grid, Header, Message, Segment, Card, Image
 } from 'semantic-ui-react';
 
+class Logout extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { authenticated: true };
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  async handleClick() {
+    console.log('loging out');
+    const res = await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      mode: 'cors'
+    });
+    const { loggedOut } = await res.json();
+    console.log('Logged out ? ', loggedOut);
+    this.setState({ authenticated: false });
+  }
+
+  render() {
+    const { authenticated } = this.state;
+    return (
+      <a className="nav-link" onClick={this.handleClick}>
+        Logout
+        {!authenticated && <Redirect to="/login" />}
+      </a>
+    );
+  }
+}
+
 const NavLinks = () => (
   <nav>
     <NavLink className="nav-link" to="/">
@@ -14,6 +47,7 @@ const NavLinks = () => (
     <NavLink className="nav-link" to="/preferred">
       Preferred Shops
     </NavLink>
+    <Logout />
   </nav>
 );
 
