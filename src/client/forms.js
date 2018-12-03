@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Button, Form, Grid, Header, Message
 } from 'semantic-ui-react';
-import { BrowserRouter as Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const FormHeader = ({ text }) => (
   <Header as="h2" color="blue" textAlign="center">
